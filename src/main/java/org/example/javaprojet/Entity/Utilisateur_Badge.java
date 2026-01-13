@@ -18,6 +18,8 @@ import java.util.Date;
 public class Utilisateur_Badge {
     @Id
     private String id;
+    private String utilisateurId;
+    private String badgeId;
     private Date dateAttribution;
 
 

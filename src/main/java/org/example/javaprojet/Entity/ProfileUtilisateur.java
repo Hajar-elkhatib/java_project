@@ -9,15 +9,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.sql.Date;
+import java.util.Date;
+
 
 @Document
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+
 public class ProfileUtilisateur {
     @Id
-    private String id;
+    private String idProfil;
     private String LanguesPref;
     private String paysPref;
     private Date dateMiseAjour;

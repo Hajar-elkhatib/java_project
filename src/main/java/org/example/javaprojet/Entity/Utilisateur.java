@@ -18,7 +18,7 @@ import java.sql.Date;
 @Data
 public class Utilisateur {
     @Id
-    private String id;
+    private String utilisateurId;
     private Date daeInscription;
     private  int niveauBadge;
     private String statu;
