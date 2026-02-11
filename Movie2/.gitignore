@@ -1,0 +1,11 @@
+# Modèles volumineux (800 Mo - trop gros pour GitHub)
+similarity.pkl
+similarity_parts/
+
+# Librairies et environnement
+venv/
+.env
+__pycache__/
+
+# Fichiers de données (Optionnel, si vous préférez les garder en local)
+# dataset.csv
