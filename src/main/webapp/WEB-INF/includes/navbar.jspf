@@ -1,0 +1,83 @@
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<nav id="mainNav" class="fixed top-0 w-full z-50 transition-all duration-300 px-4 md:px-12 py-4 flex items-center justify-between bg-transparent">
+    <div class="flex items-center gap-8">
+        <!-- Logo -->
+        <a href="${pageContext.request.contextPath}/" class="text-netflix-red text-2xl md:text-3xl font-bold tracking-tighter uppercase transition-transform hover:scale-105">
+            CineStream
+        </a>
+
+        <!-- Desktop Navigation -->
+        <ul class="hidden lg:flex items-center gap-5 text-sm font-medium text-gray-300">
+            <li><a href="${pageContext.request.contextPath}/" class="hover:text-white transition-colors">Accueil</a></li>
+            <li><a href="${pageContext.request.contextPath}/movies" class="hover:text-white transition-colors">Films</a></li>
+            <li><a href="${pageContext.request.contextPath}/series" class="hover:text-white transition-colors">Séries</a></li>
+            <li><a href="${pageContext.request.contextPath}/documentaries" class="hover:text-white transition-colors">Documentaires</a></li>
+            <li><a href="${pageContext.request.contextPath}/recommendations" class="hover:text-white transition-colors">Recommandations</a></li>
+        </ul>
+    </div>
+
+    <div class="flex items-center gap-4 md:gap-6">
+        <!-- Search Bar (Simplified) -->
+        <form action="${pageContext.request.contextPath}/movies" method="get" class="relative group hidden sm:block">
+            <input type="text" name="search" 
+                   class="bg-black/40 border border-gray-600 text-white text-sm rounded-full py-1.5 pl-4 pr-10 focus:outline-none focus:ring-1 focus:ring-netflix-red focus:border-netflix-red w-40 md:w-64 transition-all"
+                   placeholder="Titres, genres...">
+            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-white">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+
+        <!-- User Profile -->
+        <div class="relative">
+            <c:choose>
+                <c:when test="${not empty sessionScope.user}">
+                    <div class="flex items-center gap-3 cursor-pointer group px-2 py-1 rounded-md hover:bg-white/10 transition-colors" id="profileDropdown">
+                        <div class="w-8 h-8 md:w-9 md:h-9 bg-netflix-red rounded flex items-center justify-center font-bold text-white shadow-lg">
+                            ${sessionScope.user.nom.substring(0,1)}${sessionScope.user.prenom.substring(0,1)}
+                        </div>
+                        <span class="hidden md:block text-sm font-medium">${sessionScope.user.prenom}</span>
+                        <i class="bi bi-caret-down-fill text-[10px] text-gray-400 group-hover:text-white transition-colors"></i>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="absolute right-0 top-full mt-2 w-48 bg-netflix-black border border-white/10 rounded shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100]">
+                            <div class="py-2 border-b border-white/10 flex flex-col px-4 text-xs text-gray-400">
+                                <span class="text-white font-semibold text-sm">${sessionScope.user.nom} ${sessionScope.user.prenom}</span>
+                                <span>${sessionScope.user.email}</span>
+                            </div>
+                            <a href="${pageContext.request.contextPath}/profile" class="block px-4 py-2 text-sm hover:bg-white/10 transition-colors">Mon Profil</a>
+                            <c:if test="${sessionScope.user.role == 'ADMIN'}">
+                                <a href="${pageContext.request.contextPath}/admin" class="block px-4 py-2 text-sm text-yellow-500 hover:bg-white/10 transition-colors font-medium">Administration</a>
+                            </c:if>
+                            <div class="border-t border-white/10 my-1"></div>
+                            <a href="${pageContext.request.contextPath}/logout" class="block px-4 py-2 text-sm text-red-500 hover:bg-white/10 transition-colors font-semibold">Déconnexion</a>
+                        </div>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="flex items-center gap-3">
+                        <a href="${pageContext.request.contextPath}/login" class="text-sm font-medium hover:text-gray-300 transition-colors">Connexion</a>
+                        <a href="${pageContext.request.contextPath}/register" 
+                           class="bg-netflix-red text-white text-sm px-5 py-1.5 rounded font-semibold hover:bg-red-700 transition-all shadow-lg hover:shadow-red-900/40">
+                            S'inscrire
+                        </a>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </div>
+</nav>
+
+<script>
+    const nav = document.getElementById('mainNav');
+    window.onscroll = function() {
+        if (window.pageYOffset > 20) {
+            nav.classList.add('bg-netflix-black', 'shadow-xl');
+            nav.classList.remove('bg-transparent', 'py-4');
+            nav.classList.add('py-2');
+        } else {
+            nav.classList.remove('bg-netflix-black', 'shadow-xl');
+            nav.classList.add('bg-transparent', 'py-4');
+            nav.classList.remove('py-2');
+        }
+    };
+</script>
