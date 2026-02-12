@@ -70,6 +70,41 @@
         </div>
     </section>
 
+    <!-- Top 10 Trending Section -->
+    <section>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl md:text-2xl font-semibold">Le Top 10 des tendances</h2>
+        </div>
+        
+        <div class="flex overflow-x-auto gap-12 py-8 hide-scrollbar scroll-smooth">
+            <c:forEach items="${trendingContents}" var="content" varStatus="status">
+                <!-- Trending Card with Rank -->
+                <div class="flex-none flex items-center group cursor-pointer" 
+                     onclick="window.location.href='${pageContext.request.contextPath}/movies/${content.id}'">
+                    
+                    <!-- Large Rank Number -->
+                    <div class="relative">
+                        <span class="text-[120px] md:text-[180px] font-black leading-none text-transparent tracking-tighter"
+                              style="-webkit-text-stroke: 3px #555;">
+                            ${status.index + 1}
+                        </span>
+                        
+                        <!-- Movie Poster positioned over/beside number -->
+                        <div class="absolute top-1/2 -translate-y-1/2 left-[40%] md:left-[50%] w-32 md:w-44 aspect-[2/3] rounded-md overflow-hidden shadow-2xl movie-card-zoom border border-gray-800">
+                             <img src="${not empty content.posterUrl ? content.posterUrl : 'https://via.placeholder.com/300x450?text=CineStream'}" 
+                                 class="w-full h-full object-cover" alt="${content.titre}">
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+            <c:if test="${empty trendingContents}">
+                 <div class="flex items-center justify-center w-full py-20 text-gray-500 italic">
+                    Top 10 bientôt disponible.
+                 </div>
+            </c:if>
+        </div>
+    </section>
+
 </div>
 
 <%@ include file="includes/footer.jspf" %>

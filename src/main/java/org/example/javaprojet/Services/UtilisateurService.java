@@ -69,4 +69,12 @@ public class UtilisateurService {
     public void deleteUtilisateur(String id) {
         UtilisateurRepository.deleteById(id);
     }
+
+    public void savePreferences(String id, List<String> genres, List<String> liked) {
+        Utilisateur u = getUtilisateurById(id);
+        u.setPreferredGenreIds(genres);
+        u.setLikedContentIds(liked);
+        u.setFirstLogin(false);
+        UtilisateurRepository.save(u);
+    }
 }

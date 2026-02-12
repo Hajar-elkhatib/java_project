@@ -7,6 +7,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "utilisateur")
 @AllArgsConstructor
@@ -24,4 +26,8 @@ public class Utilisateur {
     private int niveauBadge;
     private String statu;
     private boolean profilPublic;
+    private boolean firstLogin = true;
+    private List<String> preferredGenreIds = new ArrayList<>();
+    private List<String> likedContentIds = new ArrayList<>();
+    private List<String> seenContentIds = new ArrayList<>();
 }

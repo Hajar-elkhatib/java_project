@@ -33,6 +33,10 @@ public class ContenuService {
         return contenuRepository.findTop8ByOrderByNoteMoyenneDesc();
     }
 
+    public List<Contenu> getTrendingContent() {
+        return contenuRepository.findTop10ByOrderByNbVotesDesc();
+    }
+
     public Contenu saveContenu(Contenu contenu) {
         return contenuRepository.save(contenu);
     }

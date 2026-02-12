@@ -22,12 +22,15 @@ public class HomeController {
     private final ContenuService contenuService;
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(HttpSession session, Model model) {
+        Utilisateur user = (Utilisateur) session.getAttribute("user");
+        if (user != null && user.isFirstLogin()) {
+            return "redirect:/onboarding";
+        }
         List<Contenu> featured = contenuService.getTopRatedContent();
-        System.out.println("DEBUG: Connection MongoDB établie sur java_projet.");
-        System.out.println("DEBUG: Nombre de contenus trouvés en base : " + (featured != null ? featured.size() : 0));
-
+        List<Contenu> trending = contenuService.getTrendingContent();
         model.addAttribute("featuredContents", featured);
+        model.addAttribute("trendingContents", trending);
         return "index";
     }
 
@@ -60,6 +63,9 @@ public class HomeController {
             if (u.getEmail() != null && u.getEmail().equals(email) && u.getMotDePasse() != null
                     && u.getMotDePasse().equals(motDePasse)) {
                 session.setAttribute("user", u);
+                if (u.isFirstLogin()) {
+                    return "redirect:/onboarding";
+                }
                 return "redirect:/";
             }
         }
