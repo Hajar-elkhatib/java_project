@@ -5,7 +5,6 @@ import org.example.javaprojet.Entity.Utilisateur_Contenu_Favori;
 import org.example.javaprojet.Repository.UtilisateurContenuFavoriRepository;
 import org.springframework.stereotype.Service;
 
-
 import java.util.Date;
 import java.util.List;
 
@@ -20,8 +19,7 @@ public class UtilisateurContenuFavoriService {
 
         boolean existe = repository.existsByUtilisateurIdAndContenuId(
                 favori.getUtilisateurId(),
-                favori.getContenuId()
-        );
+                favori.getContenuId());
 
         if (existe) {
             throw new RuntimeException("Contenu déjà dans les favoris");
@@ -44,5 +42,9 @@ public class UtilisateurContenuFavoriService {
     // ❌ Retirer des favoris
     public void supprimerFavori(String id) {
         repository.deleteById(id);
+    }
+
+    public long countByUtilisateur(String utilisateurId) {
+        return repository.countByUtilisateurId(utilisateurId);
     }
 }

@@ -47,4 +47,8 @@ public class HistoriqueInteractionService {
     public void supprimerInteraction(String id) {
         repository.deleteById(id);
     }
+
+    public long countByUtilisateur(String utilisateurId, String type) {
+        return repository.countByUtilisateurIdAndTypeInteraction(utilisateurId, type);
+    }
 }

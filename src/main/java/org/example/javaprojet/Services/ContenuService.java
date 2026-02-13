@@ -21,6 +21,10 @@ public class ContenuService {
     private final PersonneRepository personneRepository;
     private final ParticipationRepository participationRepository;
     private final GenreRepository genreRepository;
+    private final CommentaireRepository commentaireRepository;
+    private final EvaluationRepository evaluationRepository;
+    private final UtilisateurContenuFavoriRepository favoriRepository;
+    private final HistoriqueInteractionRepository interactionRepository;
 
     public List<Contenu> getAllContenus() {
         return contenuRepository.findAll();
@@ -32,14 +36,9 @@ public class ContenuService {
 
     public List<Contenu> searchContenus(String query) {
         Set<Contenu> results = new HashSet<>();
-
-        // 1. Search by title
         results.addAll(contenuRepository.findByTitreContainingIgnoreCase(query));
-
-        // 2. Search by country
         results.addAll(contenuRepository.findByPaysContainingIgnoreCase(query));
 
-        // 3. Search by Genre name
         List<Genre> genres = genreRepository.findAll().stream()
                 .filter(g -> g.getNom() != null && g.getNom().toLowerCase().contains(query.toLowerCase()))
                 .collect(Collectors.toList());
@@ -47,18 +46,22 @@ public class ContenuService {
             results.addAll(contenuRepository.findByGenreIdsContains(g.getId()));
         }
 
-        // 4. Search by Actor/Person name
         List<Personne> personnes = personneRepository.findByNomContainingIgnoreCase(query);
         for (Personne p : personnes) {
-            List<Participation> participations = participationRepository.findAll().stream()
+            participationRepository.findAll().stream()
                     .filter(part -> part.getPersonneId() != null && part.getPersonneId().equals(p.getId()))
-                    .collect(Collectors.toList());
-            for (Participation part : participations) {
-                contenuRepository.findById(part.getContenuId()).ifPresent(results::add);
-            }
+                    .forEach(part -> contenuRepository.findById(part.getContenuId()).ifPresent(results::add));
         }
 
         return new ArrayList<>(results);
+    }
+
+    public List<String> getGenreNames(List<String> genreIds) {
+        if (genreIds == null)
+            return new ArrayList<>();
+        return genreIds.stream()
+                .map(id -> genreRepository.findById(id).map(Genre::getNom).orElse("Inconnu"))
+                .collect(Collectors.toList());
     }
 
     public List<Contenu> getContenusByType(String type) {
@@ -82,11 +85,21 @@ public class ContenuService {
     }
 
     public void deleteContenu(String id) {
+        // Cascade delete
+        saisonRepository.findByContenuId(id).forEach(s -> {
+            episodeRepository.findBySaisonId(s.getId()).forEach(ep -> episodeRepository.delete(ep));
+            saisonRepository.delete(s);
+        });
+        participationRepository.findByContenuId(id).forEach(p -> participationRepository.delete(p));
+        commentaireRepository.findByContenuId(id).forEach(c -> commentaireRepository.delete(c));
+        evaluationRepository.findByContenuId(id).forEach(e -> evaluationRepository.delete(e));
+        favoriRepository.findByContenuId(id).forEach(f -> favoriRepository.delete(f));
+        interactionRepository.findByContenuId(id).forEach(i -> interactionRepository.delete(i));
+
         contenuRepository.deleteById(id);
     }
 
     // Relations Saisons / Episodes
-
     public List<Saison> getSaisonsByContenuId(String contenuId) {
         return saisonRepository.findByContenuId(contenuId);
     }
@@ -101,5 +114,9 @@ public class ContenuService {
 
     public Episode saveEpisode(Episode episode) {
         return episodeRepository.save(episode);
+    }
+
+    public List<Contenu> getContenusByIds(List<String> ids) {
+        return contenuRepository.findAllById(ids);
     }
 }

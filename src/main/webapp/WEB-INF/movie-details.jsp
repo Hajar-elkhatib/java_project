@@ -42,7 +42,16 @@
                                 <i class="bi bi-play-fill text-2xl"></i> Regarder le Trailer
                             </a>
                         </c:if>
-                        
+
+                        <c:if test="${not empty sessionScope.user}">
+                            <form action="${pageContext.request.contextPath}/favorites/${isFavorite ? 'remove' : 'add'}/${movie.id}" method="post">
+                                <button type="submit" class="bg-gray-500/30 text-white py-3 px-6 rounded-md font-bold flex items-center gap-2 hover:bg-white/20 transition-all border border-white/10">
+                                    <i class="bi ${isFavorite ? 'bi-check-lg' : 'bi-plus-lg'} text-xl"></i> 
+                                    ${isFavorite ? 'Ma Liste' : 'Ma Liste'}
+                                </button>
+                            </form>
+                        </c:if>
+
                         <!-- Mini Rating Component -->
                         <c:if test="${not empty sessionScope.user}">
                             <form action="${pageContext.request.contextPath}/movies/${movie.id}/rate" method="post" class="flex items-center bg-white/10 p-1 rounded-lg border border-white/10">
@@ -248,7 +257,11 @@
                         </li>
                         <li class="flex justify-between">
                             <span class="text-gray-500">Genre</span>
-                            <span class="text-white">${movie.typeContenu}</span>
+                            <span class="text-white">
+                                <c:forEach items="${genreNames}" var="genre" varStatus="loop">
+                                    ${genre}${!loop.last ? ', ' : ''}
+                                </c:forEach>
+                            </span>
                         </li>
                     </ul>
                 </div>

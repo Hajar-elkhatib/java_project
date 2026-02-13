@@ -6,6 +6,7 @@ import org.example.javaprojet.Entity.Utilisateur;
 import org.example.javaprojet.Services.ContenuService;
 import org.example.javaprojet.Services.FeedbackService;
 import org.example.javaprojet.Services.ParticipationService;
+import org.example.javaprojet.Services.UtilisateurContenuFavoriService;
 
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ public class MovieController {
     private final ContenuService contenuService;
     private final FeedbackService feedbackService;
     private final ParticipationService participationService;
+    private final UtilisateurContenuFavoriService favoriteService;
 
     @GetMapping
     public String listMovies(@RequestParam(required = false) String search, Model model) {
@@ -33,11 +35,20 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public String movieDetails(@PathVariable String id, Model model) {
+    public String movieDetails(@PathVariable String id, Model model, HttpSession session) {
         Contenu movie = contenuService.getContenuById(id);
         model.addAttribute("movie", movie);
         model.addAttribute("comments", feedbackService.getCommentsForContent(id));
         model.addAttribute("actors", participationService.getCastByContenu(id));
+        model.addAttribute("genreNames", contenuService.getGenreNames(movie.getGenreIds()));
+
+        // Check if favorite
+        Utilisateur user = (Utilisateur) session.getAttribute("user");
+        if (user != null) {
+            boolean isFavorite = favoriteService.getFavorisByUtilisateur(user.getUtilisateurId()).stream()
+                    .anyMatch(f -> f.getContenuId().equals(id));
+            model.addAttribute("isFavorite", isFavorite);
+        }
 
         if ("Serie".equalsIgnoreCase(movie.getTypeContenu())) {
             model.addAttribute("saisons", contenuService.getSaisonsByContenuId(id));

@@ -1,4 +1,5 @@
 package org.example.javaprojet.Services;
+
 import lombok.RequiredArgsConstructor;
 import org.example.javaprojet.Entity.Utilisateur_Badge;
 import org.example.javaprojet.Repository.UtilisateurBadgeRepository;
@@ -32,5 +33,9 @@ public class UtilisateurBadgeService {
     // ❌ Supprimer attribution
     public void supprimerAttribution(String id) {
         repository.deleteById(id);
+    }
+
+    public long countByUtilisateur(String utilisateurId) {
+        return repository.countByUtilisateurId(utilisateurId);
     }
 }
