@@ -17,5 +17,6 @@ public class HistoriqueInteraction {
     private String id;
     private Date dateHeure;
     private String typeInteraction;
-
+    private String utilisateurId;
+    private String contenuId;
 }

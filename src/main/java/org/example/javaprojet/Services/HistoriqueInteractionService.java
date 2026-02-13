@@ -35,6 +35,14 @@ public class HistoriqueInteractionService {
         return repository.findByTypeInteraction(type);
     }
 
+    public List<HistoriqueInteraction> getByUtilisateur(String utilisateurId) {
+        return repository.findByUtilisateurId(utilisateurId);
+    }
+
+    public List<HistoriqueInteraction> getByContenu(String contenuId) {
+        return repository.findByContenuId(contenuId);
+    }
+
     // ❌ Supprimer interaction
     public void supprimerInteraction(String id) {
         repository.deleteById(id);

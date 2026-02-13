@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "contenu")
 @AllArgsConstructor
@@ -38,6 +40,9 @@ public class Contenu {
     private String posterUrl;
 
     private String trailerUrl;
+
+    // Relations
+    private List<String> genreIds = new ArrayList<>();
 
     /**
      * Transforme une URL YouTube standard en URL Embed pour <iframe>

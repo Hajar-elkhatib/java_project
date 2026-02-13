@@ -12,4 +12,7 @@ public interface HistoriqueInteractionRepository extends MongoRepository<Histori
 
     List<HistoriqueInteraction> findByTypeInteraction(String typeInteraction);
 
+    List<HistoriqueInteraction> findByUtilisateurId(String utilisateurId);
+
+    List<HistoriqueInteraction> findByContenuId(String contenuId);
 }

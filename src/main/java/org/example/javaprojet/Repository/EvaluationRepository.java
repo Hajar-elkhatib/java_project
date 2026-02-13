@@ -9,4 +9,6 @@ public interface EvaluationRepository extends MongoRepository<Evaluation, String
     List<Evaluation> findByContenuId(String contenuId);
 
     Optional<Evaluation> findByUtilisateurIdAndContenuId(String utilisateurId, String contenuId);
+
+    List<Evaluation> findByUtilisateurId(String utilisateurId);
 }

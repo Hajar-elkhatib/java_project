@@ -19,5 +19,5 @@ public class ProfileUtilisateur {
     private String LanguesPref;
     private String paysPref;
     private Date dateMiseAjour;
-
+    private String utilisateurId; // Link to Utilisateur
 }

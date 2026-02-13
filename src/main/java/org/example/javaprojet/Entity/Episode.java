@@ -16,5 +16,5 @@ public class Episode {
     private int numeroEpisode;
     private String titre;
     private int dureeMinutes;
-
+    private String saisonId; // Référence vers la Saison
 }

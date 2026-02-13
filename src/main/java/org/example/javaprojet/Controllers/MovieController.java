@@ -5,6 +5,8 @@ import org.example.javaprojet.Entity.Contenu;
 import org.example.javaprojet.Entity.Utilisateur;
 import org.example.javaprojet.Services.ContenuService;
 import org.example.javaprojet.Services.FeedbackService;
+
+import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +35,18 @@ public class MovieController {
         Contenu movie = contenuService.getContenuById(id);
         model.addAttribute("movie", movie);
         model.addAttribute("comments", feedbackService.getCommentsForContent(id));
+
+        if ("Serie".equalsIgnoreCase(movie.getTypeContenu())) {
+            model.addAttribute("saisons", contenuService.getSaisonsByContenuId(id));
+        }
+
         return "movie-details";
+    }
+
+    @GetMapping("/saisons/{saisonId}/episodes")
+    @ResponseBody
+    public List<org.example.javaprojet.Entity.Episode> getEpisodes(@PathVariable String saisonId) {
+        return contenuService.getEpisodesBySaisonId(saisonId);
     }
 
     @PostMapping("/{id}/comment")

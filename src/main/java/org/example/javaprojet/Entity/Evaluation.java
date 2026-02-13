@@ -15,7 +15,6 @@ public class Evaluation {
     private String id;
     private int note;
     private java.util.Date dateEvaluation;
-
     private String utilisateurId;
     private String contenuId;
 }

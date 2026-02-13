@@ -14,5 +14,5 @@ public class Saison {
     @Id
     private String id;
     private int numeroSaison;
-
+    private String contenuId; // Référence vers la Série (Contenu)
 }

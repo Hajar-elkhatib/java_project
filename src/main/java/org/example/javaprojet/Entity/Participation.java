@@ -19,5 +19,6 @@ public class Participation {
     private String nomPersonnage;
     private int importance;
     private Date dateAjout;
-
+    private String contenuId;
+    private String personneId;
 }

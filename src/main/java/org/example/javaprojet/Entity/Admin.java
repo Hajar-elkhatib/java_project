@@ -2,24 +2,15 @@ package org.example.javaprojet.Entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "admins")
-
-// @Document
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Admin {
-    @Id
-    private String id;
-    private String nom;
-    private String email; // <-- doit exister exactement
-    private String motDePasse;
-    private String pays;
-    private String role;
+@EqualsAndHashCode(callSuper = true)
+public class Admin extends Personne {
     private int niveauAcces;
-
 }

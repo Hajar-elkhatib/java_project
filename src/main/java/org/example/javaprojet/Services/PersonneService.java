@@ -1,6 +1,5 @@
 package org.example.javaprojet.Services;
 
-
 import lombok.RequiredArgsConstructor;
 import org.example.javaprojet.Entity.Personne;
 import org.example.javaprojet.Repository.PersonneRepository;
@@ -12,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PersonneService {
 
-    private  final PersonneRepository personneRepository;
+    private final PersonneRepository personneRepository;
 
     // 🔹 CREATE
     public Personne save(Personne personne) {
@@ -37,7 +36,7 @@ public class PersonneService {
         p.setEmail(updated.getEmail());
         p.setMotDePasse(updated.getMotDePasse());
 
-        p.setPayes(updated.getPayes());
+        p.setPays(updated.getPays());
         p.setRole(updated.getRole());
         return personneRepository.save(p);
     }

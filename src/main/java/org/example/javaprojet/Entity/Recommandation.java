@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Document
 @AllArgsConstructor
@@ -17,5 +17,7 @@ public class Recommandation {
     private String id;
     private Float score;
     private Date dateCreation;
-
+    private String utilisateurId;
+    private String contenuId;
+    private String modeleId; // Link to ModeleRecommandation
 }

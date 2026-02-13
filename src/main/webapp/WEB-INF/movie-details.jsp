@@ -145,6 +145,74 @@
                         </c:if>
                     </div>
                 </div>
+
+                <!-- Seasons & Episodes Section (Only for Series) -->
+                <c:if test="${movie.typeContenu == 'Serie'}">
+                    <div class="mt-12">
+                        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                            <i class="bi bi-stack text-netflix-red"></i> Saisons & Épisodes
+                        </h2>
+                        
+                        <div class="flex flex-wrap gap-3 mb-8">
+                            <c:forEach items="${saisons}" var="saison" varStatus="status">
+                                <button onclick="loadEpisodes('${saison.id}', this)" 
+                                        class="season-tab px-6 py-2 rounded-full border border-white/10 hover:bg-white/10 transition-all font-semibold ${status.first ? 'bg-netflix-red border-netflix-red' : ''}">
+                                    Saison ${saison.numeroSaison}
+                                </button>
+                                <c:if test="${status.first}">
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', () => {
+                                            loadEpisodes('${saison.id}', document.querySelector('.season-tab'));
+                                        });
+                                    </script>
+                                </c:if>
+                            </c:forEach>
+                        </div>
+
+                        <div id="episodes-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Episodes will be loaded here via JS -->
+                            <div class="col-span-full py-10 text-center text-gray-500 italic">
+                                Chargement des épisodes...
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        function loadEpisodes(saisonId, btn) {
+                            // Style active tab
+                            document.querySelectorAll('.season-tab').forEach(b => b.classList.remove('bg-netflix-red', 'border-netflix-red'));
+                            btn.classList.add('bg-netflix-red', 'border-netflix-red');
+
+                            const container = document.getElementById('episodes-container');
+                            container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-500 italic">Chargement...</div>';
+
+                            fetch(`${pageContext.request.contextPath}/movies/saisons/\${saisonId}/episodes`)
+                                .then(response => response.json())
+                                .then(episodes => {
+                                    if(episodes.length === 0) {
+                                        container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-500 italic">Aucun épisode trouvé pour cette saison.</div>';
+                                        return;
+                                    }
+                                    container.innerHTML = episodes.map(ep => `
+                                        <div class="bg-white/5 border border-white/5 p-4 rounded-xl flex items-center gap-4 hover:bg-white/10 transition-all group cursor-pointer">
+                                            <div class="w-12 h-12 flex-none bg-netflix-black rounded-lg flex items-center justify-center font-bold text-netflix-red group-hover:bg-netflix-red group-hover:text-white transition-colors">
+                                                \${ep.numeroEpisode}
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <h4 class="font-bold text-sm truncate">\${ep.titre}</h4>
+                                                <p class="text-[10px] text-gray-500 uppercase tracking-widest">\${ep.dureeMinutes} minutes</p>
+                                            </div>
+                                            <i class="bi bi-play-circle text-xl opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        </div>
+                                    `).join('');
+                                })
+                                .catch(err => {
+                                    console.error('Error loading episodes:', err);
+                                    container.innerHTML = '<div class="col-span-full py-10 text-center text-red-500 italic">Erreur lors du chargement des épisodes.</div>';
+                                });
+                        }
+                    </script>
+                </c:if>
             </div>
 
             <!-- Sidebar -->

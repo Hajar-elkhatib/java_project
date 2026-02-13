@@ -14,4 +14,6 @@ public interface ContenuRepository extends MongoRepository<Contenu, String> {
     List<Contenu> findTop8ByOrderByNoteMoyenneDesc();
 
     List<Contenu> findTop10ByOrderByNbVotesDesc();
+
+    List<Contenu> findByGenreIdsContains(String genreId);
 }
