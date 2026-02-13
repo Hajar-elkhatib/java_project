@@ -5,6 +5,7 @@ import org.example.javaprojet.Entity.Contenu;
 import org.example.javaprojet.Entity.Utilisateur;
 import org.example.javaprojet.Services.ContenuService;
 import org.example.javaprojet.Services.FeedbackService;
+import org.example.javaprojet.Services.ParticipationService;
 
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ public class MovieController {
 
     private final ContenuService contenuService;
     private final FeedbackService feedbackService;
+    private final ParticipationService participationService;
 
     @GetMapping
     public String listMovies(@RequestParam(required = false) String search, Model model) {
@@ -35,6 +37,7 @@ public class MovieController {
         Contenu movie = contenuService.getContenuById(id);
         model.addAttribute("movie", movie);
         model.addAttribute("comments", feedbackService.getCommentsForContent(id));
+        model.addAttribute("actors", participationService.getCastByContenu(id));
 
         if ("Serie".equalsIgnoreCase(movie.getTypeContenu())) {
             model.addAttribute("saisons", contenuService.getSaisonsByContenuId(id));

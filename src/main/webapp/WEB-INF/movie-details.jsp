@@ -252,6 +252,26 @@
                         </li>
                     </ul>
                 </div>
+
+                <!-- Cast & Crew -->
+                <c:if test="${not empty actors}">
+                    <div class="bg-netflix-darkGray/50 p-8 rounded-2xl border border-white/5">
+                        <h3 class="font-bold mb-6 uppercase tracking-widest text-xs text-gray-400">Acteurs & Équipe</h3>
+                        <div class="space-y-4">
+                            <c:forEach items="${actors}" var="actor">
+                                <div class="flex items-center gap-3 group cursor-pointer">
+                                    <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center font-bold text-xs uppercase group-hover:bg-netflix-red transition-colors">
+                                        ${actor.nom.substring(0,1)}
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-bold group-hover:text-netflix-red transition-colors">${actor.nom}</p>
+                                        <p class="text-[10px] text-gray-500 uppercase">${actor.role} <c:if test="${not empty actor.personnage}"> • ${actor.personnage}</c:if></p>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </c:if>
             </div>
         </div>
     </c:if>

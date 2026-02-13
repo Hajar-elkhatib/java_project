@@ -1,15 +1,15 @@
 package org.example.javaprojet.Services;
 
 import lombok.RequiredArgsConstructor;
-import org.example.javaprojet.Entity.Contenu;
-import org.example.javaprojet.Entity.Saison;
-import org.example.javaprojet.Entity.Episode;
-import org.example.javaprojet.Repository.ContenuRepository;
-import org.example.javaprojet.Repository.SaisonRepository;
-import org.example.javaprojet.Repository.EpisodeRepository;
+import org.example.javaprojet.Entity.*;
+import org.example.javaprojet.Repository.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +18,9 @@ public class ContenuService {
     private final ContenuRepository contenuRepository;
     private final SaisonRepository saisonRepository;
     private final EpisodeRepository episodeRepository;
+    private final PersonneRepository personneRepository;
+    private final ParticipationRepository participationRepository;
+    private final GenreRepository genreRepository;
 
     public List<Contenu> getAllContenus() {
         return contenuRepository.findAll();
@@ -28,7 +31,34 @@ public class ContenuService {
     }
 
     public List<Contenu> searchContenus(String query) {
-        return contenuRepository.findByTitreContainingIgnoreCase(query);
+        Set<Contenu> results = new HashSet<>();
+
+        // 1. Search by title
+        results.addAll(contenuRepository.findByTitreContainingIgnoreCase(query));
+
+        // 2. Search by country
+        results.addAll(contenuRepository.findByPaysContainingIgnoreCase(query));
+
+        // 3. Search by Genre name
+        List<Genre> genres = genreRepository.findAll().stream()
+                .filter(g -> g.getNom() != null && g.getNom().toLowerCase().contains(query.toLowerCase()))
+                .collect(Collectors.toList());
+        for (Genre g : genres) {
+            results.addAll(contenuRepository.findByGenreIdsContains(g.getId()));
+        }
+
+        // 4. Search by Actor/Person name
+        List<Personne> personnes = personneRepository.findByNomContainingIgnoreCase(query);
+        for (Personne p : personnes) {
+            List<Participation> participations = participationRepository.findAll().stream()
+                    .filter(part -> part.getPersonneId() != null && part.getPersonneId().equals(p.getId()))
+                    .collect(Collectors.toList());
+            for (Participation part : participations) {
+                contenuRepository.findById(part.getContenuId()).ifPresent(results::add);
+            }
+        }
+
+        return new ArrayList<>(results);
     }
 
     public List<Contenu> getContenusByType(String type) {

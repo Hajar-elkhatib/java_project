@@ -2,13 +2,17 @@ package org.example.javaprojet.Controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.example.javaprojet.Entity.Contenu;
+import org.example.javaprojet.Entity.Utilisateur;
 import org.example.javaprojet.Services.ContenuService;
+import org.example.javaprojet.Services.RecommandationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/recommendations")
@@ -16,29 +20,38 @@ import java.util.List;
 public class RecommendationPageController {
 
     private final ContenuService contenuService;
+    private final RecommandationService recommandationService;
 
     @GetMapping
-    public String recommendations(Model model) {
-        // Fetch categorized content
-        // We use case-insensitive or standardized types
-        List<Contenu> films = contenuService.getContenusByType("Film");
-        if (films.isEmpty())
-            films = contenuService.getContenusByType("FILM");
+    public String recommendations(HttpSession session, Model model) {
+        Utilisateur user = (Utilisateur) session.getAttribute("user");
 
-        List<Contenu> series = contenuService.getContenusByType("Serie");
-        if (series.isEmpty())
-            series = contenuService.getContenusByType("SERIE");
+        // CHECK LOGIN
+        if (user == null) {
+            return "redirect:/login";
+        }
 
-        List<Contenu> documentaires = contenuService.getContenusByType("Documentaire");
-        if (documentaires.isEmpty())
-            documentaires = contenuService.getContenusByType("DOCUMENTAIRE");
+        List<Contenu> recs = recommandationService.getRecommendedContentForUser(user.getUtilisateurId());
 
-        model.addAttribute("films", films);
-        model.addAttribute("series", series);
-        model.addAttribute("documentaires", documentaires);
+        // If no personalized recommendations, use trending content as fallback
+        if (recs.isEmpty()) {
+            recs = contenuService.getTrendingContent();
+        }
 
-        // Also provide all recommendations for compatibility
-        model.addAttribute("recommendations", contenuService.getAllContenus());
+        // Categorize recommendations
+        model.addAttribute("films", recs.stream()
+                .filter(c -> "Film".equalsIgnoreCase(c.getTypeContenu()))
+                .collect(Collectors.toList()));
+
+        model.addAttribute("series", recs.stream()
+                .filter(c -> "Serie".equalsIgnoreCase(c.getTypeContenu()))
+                .collect(Collectors.toList()));
+
+        model.addAttribute("documentaires", recs.stream()
+                .filter(c -> "Documentaire".equalsIgnoreCase(c.getTypeContenu()))
+                .collect(Collectors.toList()));
+
+        model.addAttribute("allRecommendations", recs);
 
         return "recommendations";
     }
