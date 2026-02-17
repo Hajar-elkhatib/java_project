@@ -79,124 +79,68 @@
                     background: #000000;
                     height: 100vh;
                     position: fixed;
+                    top: 0;
+                    left: 0;
                     width: 250px;
-                    box-shadow: 2px 0 10px rgba(229, 9, 20, 0.3);
-                    border-right: 2px solid #E50914;
+                    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+                    border-right: 1px solid #2F2F2F;
+                    z-index: 50;
+                    overflow-y: auto; /* Scrollable if content is too tall */
+                }
+
+                /* Custom Scrollbar for Sidebar */
+                .sidebar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .sidebar::-webkit-scrollbar-thumb {
+                    background: #2F2F2F;
+                    border-radius: 3px;
+                }
+                .sidebar::-webkit-scrollbar-track {
+                    background: #000000;
                 }
 
                 .sidebar-link {
                     display: flex;
                     align-items: center;
-                    padding: 12px 20px;
-                    color: #ffffff;
+                    padding: 14px 24px; /* More breathing room */
+                    color: #9ca3af;
                     text-decoration: none;
-                    transition: all 0.3s;
+                    transition: all 0.2s ease-in-out;
+                    border-left: 3px solid transparent;
+                    font-weight: 500;
                 }
 
                 .sidebar-link:hover,
                 .sidebar-link.active {
-                    background: #181818;
-                    color: #E50914;
-                    border-left: 4px solid #E50914;
+                    background: #121212; /* Slightly lighter than black */
+                    color: white;
+                    border-left-color: #E50914;
+                }
+
+                .sidebar-link i {
+                    font-size: 1.1rem;
                 }
 
                 .main-content {
                     margin-left: 250px;
-                    padding: 30px;
+                    padding: 40px;
+                    width: calc(100% - 250px);
+                    min-height: 100vh;
+                    background-color: #141414; /* Match body bg to avoid white gaps */
                 }
-
-                .tab-button {
-                    padding: 12px 24px;
-                    background: white;
-                    border: 2px solid #e5e7eb;
-                    color: #6b7280;
-                    transition: all 0.3s;
-                    cursor: pointer;
-                }
-
-                .tab-button.active {
-                    background: #667eea;
-                    color: white;
-                    border-color: #667eea;
-                }
-
-                .search-box {
-                    position: relative;
-                }
-
-                .search-box input {
-                    padding-left: 40px;
-                }
-
-                .search-box i {
-                    position: absolute;
-                    left: 14px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    color: #9ca3af;
-                }
-
-                .btn-primary {
-                    background: #E50914;
-                    color: white;
-                    padding: 10px 20px;
-                    border-radius: 8px;
-                    border: none;
-                    font-weight: 500;
-                    cursor: pointer;
-                    transition: transform 0.2s, box-shadow 0.2s;
-                }
-
-                .btn-primary:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(229, 9, 20, 0.6);
-                    background: #b20710;
-                }
-
-                .btn-danger {
-                    background: #ef4444;
-                    color: white;
-                    padding: 6px 12px;
-                    border-radius: 6px;
-                    border: none;
-                    font-size: 14px;
-                    cursor: pointer;
-                    transition: background 0.3s;
-                }
-
-                .btn-danger:hover {
-                    background: #dc2626;
-                }
-
-                .btn-edit {
-                    background: #3b82f6;
-                    color: white;
-                    padding: 6px 12px;
-                    border-radius: 6px;
-                    border: none;
-                    font-size: 14px;
-                    cursor: pointer;
-                    transition: background 0.3s;
-                    text-decoration: none;
-                    display: inline-block;
-                }
-
-                .btn-edit:hover {
-                    background: #2563eb;
-                }
-
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
+                /* ... existing styles ... */
 
                 th {
-                    background: #000000;
+                    background: #181818;
                     padding: 12px;
                     text-align: left;
                     font-weight: 600;
-                    color: #E50914;
-                    border-bottom: 2px solid #E50914;
+                    color: #9ca3af;
+                    text-transform: uppercase;
+                    font-size: 0.75rem;
+                    letter-spacing: 0.05em;
+                    border-bottom: 1px solid #2F2F2F;
                 }
 
                 td {
@@ -247,17 +191,20 @@
                     <p class="text-xs text-zinc-500 mt-1 uppercase tracking-widest">CineStream Studio</p>
                 </div>
 
-                <nav class="py-4">
-                    <a href="#" class="sidebar-link active" onclick="showTab('dashboard')">
-                        <i class="bi bi-speedometer2 mr-3"></i> Dashboard
-                    </a>
-                    <a href="#" class="sidebar-link" onclick="showTab('users')">
-                        <i class="bi bi-people mr-3"></i> Utilisateurs
-                    </a>
-                    <a href="#" class="sidebar-link" onclick="showTab('contents')">
-                        <i class="bi bi-film mr-3"></i> Contenus
-                    </a>
-                </nav>
+            <nav class="py-4">
+                <a href="#" class="sidebar-link active" onclick="showTab('dashboard')">
+                    <i class="bi bi-speedometer2 mr-3"></i> Dashboard
+                </a>
+                <a href="#" class="sidebar-link" onclick="showTab('users')">
+                    <i class="bi bi-people mr-3"></i> Utilisateurs
+                </a>
+                <a href="#" class="sidebar-link" onclick="showTab('contents')">
+                    <i class="bi bi-film mr-3"></i> Contenus
+                </a>
+                <a href="#" class="sidebar-link" onclick="showTab('genres')">
+                    <i class="bi bi-tags mr-3"></i> Genres
+                </a>
+            </nav>
 
                 <div class="absolute bottom-0 w-full p-4 border-t">
                     <a href="${pageContext.request.contextPath}/admin/logout"
@@ -307,31 +254,44 @@
                             </div>
                         </div>
 
-                        <div class="stat-card red">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <p class="text-sm opacity-80">Séries</p>
-                                    <h3 class="text-4xl font-bold mt-2">${totalSeries}</h3>
-                                </div>
-                                <i class="bi bi-tv text-4xl opacity-50"></i>
-                            </div>
+                <div class="stat-card red">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm opacity-80">Séries</p>
+                            <h3 class="text-4xl font-bold mt-2">${totalSeries}</h3>
                         </div>
+                        <i class="bi bi-tv text-4xl opacity-50"></i>
                     </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm opacity-80">Genres</p>
+                            <h3 class="text-4xl font-bold mt-2">${totalGenres}</h3>
+                        </div>
+                        <i class="bi bi-tags text-4xl opacity-50"></i>
+                    </div>
+                </div>
+            </div>
 
                     <!-- Quick Actions -->
                     <div class="card p-6">
                         <h2 class="text-xl font-bold mb-4">Actions rapides</h2>
-                        <div class="flex gap-4">
-                            <a href="${pageContext.request.contextPath}/admin/contents/add" class="btn-primary">
-                                <i class="bi bi-plus-circle"></i> Ajouter un contenu
-                            </a>
-                            <button onclick="showTab('users')" class="btn-primary">
-                                <i class="bi bi-people"></i> Gérer les utilisateurs
-                            </button>
-                            <button onclick="showTab('contents')" class="btn-primary">
-                                <i class="bi bi-film"></i> Gérer les contenus
-                            </button>
-                        </div>
+                <div class="flex gap-4 flex-wrap">
+                    <a href="${pageContext.request.contextPath}/admin/contents/add" class="btn-primary">
+                        <i class="bi bi-plus-circle"></i> Ajouter un contenu
+                    </a>
+                    <button onclick="showTab('users')" class="btn-primary">
+                        <i class="bi bi-people"></i> Gérer les utilisateurs
+                    </button>
+                    <button onclick="showTab('contents')" class="btn-primary">
+                        <i class="bi bi-film"></i> Gérer les contenus
+                    </button>
+                    <button onclick="showTab('genres')" class="btn-primary">
+                        <i class="bi bi-tags"></i> Gérer les genres
+                    </button>
+                </div>
                     </div>
                 </div>
 
@@ -481,27 +441,107 @@
                         </div>
                     </div>
                 </div>
+        </div>
+
+        <!-- Genres Tab -->
+        <div id="genres" class="tab-content">
+            <h1 class="text-3xl font-bold text-white mb-6">
+                <i class="bi bi-tags"></i> Gestion des genres
+            </h1>
+
+            <div class="card p-6 mb-6">
+                <h2 class="text-xl font-bold mb-4">Ajouter / Modifier un genre</h2>
+                <form action="${pageContext.request.contextPath}/admin/genres/save" method="post"
+                    class="flex gap-4 items-end">
+                    <input type="hidden" name="id" id="genreIdInput">
+                    <div class="flex-1">
+                        <label class="block text-sm text-gray-400 mb-1">Nom du genre</label>
+                        <input type="text" name="nom" id="genreNameInput" required
+                            class="w-full px-4 py-2 border border-zinc-800 bg-zinc-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                    </div>
+                    <button type="submit" class="btn-primary">Enregistrer</button>
+                    <button type="button" onclick="resetGenreForm()"
+                        class="btn-primary bg-gray-600 hover:bg-gray-700">Annuler</button>
+                </form>
             </div>
 
-            <script>
-                function showTab(tabName) {
-                    // Hide all tabs
-                    document.querySelectorAll('.tab-content').forEach(tab => {
-                        tab.classList.remove('active');
-                    });
+            <div class="card p-6">
+                <h2 class="text-xl font-bold mb-6">Liste des genres</h2>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${genres}" var="g">
+                                <tr>
+                                    <td><span class="font-mono text-sm text-gray-500">${g.id}</span></td>
+                                    <td class="font-bold text-lg">${g.nom}</td>
+                                    <td>
+                                        <div class="flex gap-2">
+                                            <button onclick="editGenre('${g.id}', '${g.nom}')" class="btn-edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <form action="${pageContext.request.contextPath}/admin/genres/delete/${g.id}"
+                                                method="post" style="display:inline;">
+                                                <button type="submit" class="btn-danger"
+                                                    onclick="return confirm('Supprimer ce genre ?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    // Remove active from all sidebar links
-                    document.querySelectorAll('.sidebar-link').forEach(link => {
-                        link.classList.remove('active');
-                    });
+        <script>
+            function showTab(tabName) {
+                // Hide all tabs
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
 
-                    // Show selected tab
-                    document.getElementById(tabName).classList.add('active');
+                // Remove active from all sidebar links
+                document.querySelectorAll('.sidebar-link').forEach(link => {
+                    link.classList.remove('active');
+                });
 
-                    // Add active to clicked link
-                    event.target.closest('.sidebar-link').classList.add('active');
-                }
-            </script>
+                // Show selected tab
+                document.getElementById(tabName).classList.add('active');
+
+                // Add active to clicked link
+                // Note: when calling from buttons, this might not find the link, which is acceptable
+                const sidebarLinks = document.querySelectorAll('.sidebar-link');
+                sidebarLinks.forEach(link => {
+                     if(link.getAttribute('onclick').includes(tabName)) {
+                         link.classList.add('active');
+                     }
+                });
+            }
+
+            function editGenre(id, name) {
+                document.getElementById('genreIdInput').value = id;
+                document.getElementById('genreNameInput').value = name;
+                // Scroll to form
+                document.getElementById('genreNameInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                document.getElementById('genreNameInput').focus();
+            }
+
+            function resetGenreForm() {
+                document.getElementById('genreIdInput').value = '';
+                document.getElementById('genreNameInput').value = '';
+            }
+        </script>
         </body>
 
         </html>

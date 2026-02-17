@@ -28,7 +28,7 @@ public class AdminInterceptor implements HandlerInterceptor {
         }
 
         // Redirect to login if not authenticated
-        response.sendRedirect(request.getContextPath() + "/admin/login");
+        response.sendRedirect(request.getContextPath() + "/login");
         return false;
     }
 }

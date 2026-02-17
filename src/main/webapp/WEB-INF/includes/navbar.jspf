@@ -30,6 +30,16 @@
         <!-- User Profile -->
         <div class="relative">
             <c:choose>
+                <c:when test="${sessionScope.role == 'ADMIN'}">
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-medium text-red-500 mr-2">Admin Mode</span>
+                        <a href="${pageContext.request.contextPath}/admin/dashboard" 
+                           class="bg-netflix-red/20 border border-netflix-red text-netflix-red text-sm px-4 py-1.5 rounded font-semibold hover:bg-netflix-red hover:text-white transition-all">
+                            Dashboard
+                        </a>
+                        <a href="${pageContext.request.contextPath}/admin/logout" class="text-sm font-medium hover:text-gray-300 transition-colors">Déconnexion</a>
+                    </div>
+                </c:when>
                 <c:when test="${not empty sessionScope.user}">
                     <div class="flex items-center gap-3 cursor-pointer group px-2 py-1 rounded-md hover:bg-white/10 transition-colors" id="profileDropdown">
                         <div class="w-8 h-8 md:w-9 md:h-9 bg-netflix-red rounded flex items-center justify-center font-bold text-white shadow-lg">
@@ -45,9 +55,6 @@
                                 <span>${sessionScope.user.email}</span>
                             </div>
                             <a href="${pageContext.request.contextPath}/profile" class="block px-4 py-2 text-sm hover:bg-white/10 transition-colors">Mon Profil</a>
-                            <c:if test="${sessionScope.user.role == 'ADMIN'}">
-                                <a href="${pageContext.request.contextPath}/admin" class="block px-4 py-2 text-sm text-yellow-500 hover:bg-white/10 transition-colors font-medium">Administration</a>
-                            </c:if>
                             <div class="border-t border-white/10 my-1"></div>
                             <a href="${pageContext.request.contextPath}/logout" class="block px-4 py-2 text-sm text-red-500 hover:bg-white/10 transition-colors font-semibold">Déconnexion</a>
                         </div>

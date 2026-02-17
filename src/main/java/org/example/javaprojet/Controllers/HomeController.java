@@ -58,6 +58,16 @@ public class HomeController {
             @RequestParam String motDePasse,
             HttpSession session,
             Model model) {
+
+        // Admin Login Check
+        if ("admin@admin".equals(email) && "admin".equals(motDePasse)) {
+            session.removeAttribute("user"); // Clear any previous user session
+            session.setAttribute("role", "ADMIN");
+            session.setAttribute("adminEmail", email);
+            return "redirect:/admin/dashboard";
+        }
+
+        // User Login Check
         List<Utilisateur> users = utilisateurService.getAllUtilisateurs();
         for (Utilisateur u : users) {
             if (u.getEmail() != null && u.getEmail().equals(email) && u.getMotDePasse() != null

@@ -237,8 +237,24 @@
                                         </option>
                                         <option value="SERIE" ${content.typeContenu=='SERIE' ? 'selected' : '' }>Série
                                         </option>
+                                        <option value="DOCUMENTAIRE" ${content.typeContenu=='DOCUMENTAIRE' ? 'selected' : '' }>Documentaire
+                                        </option>
                                     </select>
                                 </div>
+
+                                <!-- Genres -->
+                                <div class="form-group">
+                                    <label for="genreIds">
+                                        <i class="bi bi-tags"></i> Genres
+                                    </label>
+                                    <select id="genreIds" name="genreIds" multiple class="h-32">
+                                        <c:forEach items="${genres}" var="g">
+                                            <option value="${g.id}" ${content.genreIds.contains(g.id) ? 'selected' : ''}>
+                                                ${g.nom}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                    <div class="help-text">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs genres</div>
 
                                 <!-- Durée -->
                                 <div class="form-group">
@@ -338,6 +354,90 @@
                     </div>
                 </div>
             </div>
-        </body>
+        </div>
+
+        <!-- Seasons Management for Series -->
+        <c:if test="${isEdit && content.typeContenu == 'SERIE'}">
+            <div class="form-card" style="margin-top: 30px;">
+                <div class="form-header" style="background: #2F2F2F;">
+                    <h1><i class="bi bi-collection-play"></i> Gestion des Saisons & Épisodes</h1>
+                </div>
+                <div class="form-body">
+                    <!-- Add Season -->
+                    <div class="mb-8 p-4 border border-zinc-700 rounded-lg bg-black/20">
+                        <h3 class="font-bold mb-4 text-lg">Ajouter une saison</h3>
+                        <form action="${pageContext.request.contextPath}/admin/seasons/add" method="post"
+                            class="flex gap-4 items-end">
+                            <input type="hidden" name="contenuId" value="${content.id}">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Numéro</label>
+                                <input type="number" name="numeroSaison" value="${saisons.size() + 1}" required min="1"
+                                    class="w-24 px-4 py-2 border border-zinc-800 bg-zinc-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                            </div>
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="bi bi-plus-lg"></i> Ajouter Saison
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Seasons List -->
+                    <div class="space-y-6">
+                        <c:forEach items="${saisons}" var="s">
+                            <div class="border border-zinc-700 rounded-lg overflow-hidden">
+                                <div class="bg-zinc-800/50 p-4 border-b border-zinc-700 flex justify-between items-center">
+                                    <h3 class="font-bold text-xl text-red-500">Saison ${s.numeroSaison}</h3>
+                                    <span class="text-sm text-gray-400">${episodesMap[s.id].size()} épisodes</span>
+                                </div>
+                                <div class="p-4">
+                                    <!-- Episodes List -->
+                                    <c:if test="${not empty episodesMap[s.id]}">
+                                        <div class="mb-4 space-y-2">
+                                            <c:forEach items="${episodesMap[s.id]}" var="ep">
+                                                <div class="flex justify-between items-center bg-zinc-900 p-3 rounded">
+                                                    <div>
+                                                        <span class="font-bold mr-2 text-gray-400">#${ep.numeroEpisode}</span>
+                                                        <span class="font-medium">${ep.titre}</span>
+                                                        <span class="text-xs text-gray-500 ml-2">(${ep.dureeMinutes} min)</span>
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                    </c:if>
+
+                                    <!-- Add Episode -->
+                                    <form action="${pageContext.request.contextPath}/admin/episodes/add" method="post"
+                                        class="mt-4 flex gap-3 items-end bg-black/20 p-3 rounded">
+                                        <input type="hidden" name="contenuId" value="${content.id}">
+                                        <input type="hidden" name="saisonId" value="${s.id}">
+                                        
+                                        <div class="w-20">
+                                            <label class="block text-xs text-gray-500 mb-1">N°</label>
+                                            <input type="number" name="numeroEpisode" value="${episodesMap[s.id].size() + 1}" required
+                                                class="w-full px-3 py-1.5 text-sm border border-zinc-700 bg-zinc-900 rounded focus:border-red-600 outline-none block">
+                                        </div>
+                                        <div class="flex-1">
+                                            <label class="block text-xs text-gray-500 mb-1">Titre</label>
+                                            <input type="text" name="titre" placeholder="Titre de l'épisode" required
+                                                class="w-full px-3 py-1.5 text-sm border border-zinc-700 bg-zinc-900 rounded focus:border-red-600 outline-none block">
+                                        </div>
+                                        <div class="w-24">
+                                            <label class="block text-xs text-gray-500 mb-1">Durée (min)</label>
+                                            <input type="number" name="dureeMinutes" value="45" required
+                                                class="w-full px-3 py-1.5 text-sm border border-zinc-700 bg-zinc-900 rounded focus:border-red-600 outline-none block">
+                                        </div>
+                                        <button type="submit" class="px-4 py-1.5 bg-zinc-700 hover:bg-zinc-600 rounded text-sm font-medium transition-colors h-[34px]">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </div>
+            </div>
+        </c:if>
+
+    </div>
+</body>
 
         </html>
