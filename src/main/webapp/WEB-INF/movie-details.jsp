@@ -114,42 +114,46 @@
                         </div>
                     </c:if>
 
-                    <div class="space-y-6">
-                        <c:forEach items="${comments}" var="comment">
-                            <div class="bg-white/5 border border-white/5 p-6 rounded-2xl">
-                                <div class="flex justify-between items-start mb-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center font-bold text-xs uppercase">
-                                            <c:choose>
-                                                <c:when test="${not empty comment.utilisateurNom}">
-                                                    ${comment.utilisateurNom.substring(0,1)}
-                                                </c:when>
-                                                <c:otherwise>U</c:otherwise>
-                                            </c:choose>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-sm">
-                                                <c:out value="${not empty comment.utilisateurNom ? comment.utilisateurNom : 'Utilisateur anonyme'}" />
-                                            </h4>
-                                            <span class="text-[10px] text-gray-500 uppercase tracking-widest">
-                                                <fmt:formatDate value="${comment.dateCreation}" pattern="dd MMM yyyy" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <c:if test="${sessionScope.user.role == 'ADMIN'}">
-                                        <form action="${pageContext.request.contextPath}/admin/comments/block/${comment.id}" method="post">
-                                            <input type="hidden" name="movieId" value="${movie.id}">
-                                            <button type="submit" class="text-red-500 text-xs hover:underline">Bloquer</button>
-                                        </form>
-                                    </c:if>
-                                </div>
-                                <p class="text-gray-300 text-sm leading-relaxed">${comment.texte}</p>
-                            </div>
-                        </c:forEach>
-                        
+                    <div class="bg-white/5 border border-white/5 rounded-2xl p-6">
                         <c:if test="${empty comments}">
                             <div class="py-12 text-center">
                                 <p class="text-gray-600 italic">Pas encore de commentaires pour ce film.</p>
+                            </div>
+                        </c:if>
+                        
+                        <c:if test="${not empty comments}">
+                            <div class="space-y-6">
+                                <c:forEach items="${comments}" var="comment">
+                                    <div class="border-b border-white/5 pb-6 last:border-0 last:pb-0">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center font-bold text-xs uppercase">
+                                                    <c:choose>
+                                                        <c:when test="${not empty comment.utilisateurNom}">
+                                                            ${comment.utilisateurNom.substring(0,1)}
+                                                        </c:when>
+                                                        <c:otherwise>U</c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-bold text-sm">
+                                                        <c:out value="${not empty comment.utilisateurNom ? comment.utilisateurNom : 'Utilisateur anonyme'}" />
+                                                    </h4>
+                                                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">
+                                                        <fmt:formatDate value="${comment.dateCreation}" pattern="dd MMM yyyy" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <c:if test="${sessionScope.user.role == 'ADMIN'}">
+                                                <form action="${pageContext.request.contextPath}/admin/comments/block/${comment.id}" method="post">
+                                                    <input type="hidden" name="movieId" value="${movie.id}">
+                                                    <button type="submit" class="text-red-500 text-xs hover:underline">Bloquer</button>
+                                                </form>
+                                            </c:if>
+                                        </div>
+                                        <p class="text-gray-300 text-sm leading-relaxed">${comment.texte}</p>
+                                    </div>
+                                </c:forEach>
                             </div>
                         </c:if>
                     </div>

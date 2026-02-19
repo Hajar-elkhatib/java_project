@@ -244,17 +244,36 @@
 
                                 <!-- Genres -->
                                 <div class="form-group">
-                                    <label for="genreIds">
+                                    <label class="mb-2 block">
                                         <i class="bi bi-tags"></i> Genres
                                     </label>
-                                    <select id="genreIds" name="genreIds" multiple class="h-32">
-                                        <c:forEach items="${genres}" var="g">
-                                            <option value="${g.id}" ${content.genreIds.contains(g.id) ? 'selected' : ''}>
-                                                ${g.nom}
-                                            </option>
-                                        </c:forEach>
-                                    </select>
-                                    <div class="help-text">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs genres</div>
+                                    
+                                    <div class="bg-[#2F2F2F] border border-zinc-700 rounded-lg p-3 h-48 overflow-y-auto grid grid-cols-2 gap-2">
+                                        <c:choose>
+                                            <c:when test="${empty genres}">
+                                                <div class="col-span-2 text-center text-gray-500 py-4 italic">
+                                                    Aucun genre disponible. Veuillez en ajouter dans l'onglet "Genres".
+                                                </div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:forEach items="${genres}" var="g">
+                                                    <label class="flex items-center space-x-3 cursor-pointer hover:bg-white/5 p-2 rounded transition-colors select-none">
+                                                        <div class="relative flex items-center">
+                                                            <input type="checkbox" name="genreIds" value="${g.id}" 
+                                                                ${not empty content.genreIds && content.genreIds.contains(g.id) ? 'checked' : ''}
+                                                                class="peer w-5 h-5 rounded border-2 border-gray-500 text-red-600 focus:ring-red-500 bg-zinc-800 checked:bg-red-600 checked:border-red-600 transition-all">
+                                                            <i class="bi bi-check text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs opacity-0 peer-checked:opacity-100 pointer-events-none"></i>
+                                                        </div>
+                                                        <span class="text-sm font-medium text-gray-200 peer-checked:text-white">${g.nom}</span>
+                                                    </label>
+                                                </c:forEach>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                    <div class="help-text mt-2 text-gray-400">
+                                        <i class="bi bi-info-circle mr-1"></i> Cliquez sur les cases pour sélectionner plusieurs genres.
+                                    </div>
+                                </div>
 
                                 <!-- Durée -->
                                 <div class="form-group">

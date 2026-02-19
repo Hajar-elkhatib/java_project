@@ -441,7 +441,7 @@
                         </div>
                     </div>
                 </div>
-        </div>
+
 
         <!-- Genres Tab -->
         <div id="genres" class="tab-content">
@@ -452,16 +452,21 @@
             <div class="card p-6 mb-6">
                 <h2 class="text-xl font-bold mb-4">Ajouter / Modifier un genre</h2>
                 <form action="${pageContext.request.contextPath}/admin/genres/save" method="post"
-                    class="flex gap-4 items-end">
-                    <input type="hidden" name="id" id="genreIdInput">
+                    class="flex gap-4 items-end" autocomplete="off">
+                    <input type="hidden" name="id" id="genreIdInput" value="">
                     <div class="flex-1">
                         <label class="block text-sm text-gray-400 mb-1">Nom du genre</label>
                         <input type="text" name="nom" id="genreNameInput" required
-                            class="w-full px-4 py-2 border border-zinc-800 bg-zinc-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                            class="w-full px-4 py-2 border border-zinc-800 bg-zinc-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                            placeholder="Ex: Action, Comédie...">
                     </div>
-                    <button type="submit" class="btn-primary">Enregistrer</button>
-                    <button type="button" onclick="resetGenreForm()"
-                        class="btn-primary bg-gray-600 hover:bg-gray-700">Annuler</button>
+                    <button type="submit" class="btn-primary" id="saveGenreBtn">
+                        <i class="bi bi-plus-lg"></i> Ajouter
+                    </button>
+                    <button type="button" onclick="resetGenreForm()" id="cancelGenreBtn" style="display:none;"
+                        class="btn-primary bg-gray-600 hover:bg-gray-700">
+                        <i class="bi bi-x-lg"></i> Annuler
+                    </button>
                 </form>
             </div>
 
@@ -505,7 +510,22 @@
     </div>
 
         <script>
+            // Check hash on load and reset form
+            window.addEventListener('load', function() {
+                resetGenreForm(); // Force clear on load
+                if(window.location.hash) {
+                    const tabName = window.location.hash.substring(1);
+                    if(document.getElementById(tabName)) {
+                        showTab(tabName);
+                    }
+                }
+            });
+
             function showTab(tabName) {
+                // ... existing showTab ...
+                // Update URL hash without scrolling
+                history.replaceState(null, null, '#' + tabName);
+
                 // Hide all tabs
                 document.querySelectorAll('.tab-content').forEach(tab => {
                     tab.classList.remove('active');
@@ -519,11 +539,10 @@
                 // Show selected tab
                 document.getElementById(tabName).classList.add('active');
 
-                // Add active to clicked link
-                // Note: when calling from buttons, this might not find the link, which is acceptable
+                // Add active to matching links
                 const sidebarLinks = document.querySelectorAll('.sidebar-link');
                 sidebarLinks.forEach(link => {
-                     if(link.getAttribute('onclick').includes(tabName)) {
+                     if(link.getAttribute('onclick') && link.getAttribute('onclick').includes(tabName)) {
                          link.classList.add('active');
                      }
                 });
@@ -532,6 +551,11 @@
             function editGenre(id, name) {
                 document.getElementById('genreIdInput').value = id;
                 document.getElementById('genreNameInput').value = name;
+                
+                // Update UI for Edit Mode
+                document.getElementById('saveGenreBtn').innerHTML = '<i class="bi bi-check-lg"></i> Modifier';
+                document.getElementById('cancelGenreBtn').style.display = 'inline-block';
+                
                 // Scroll to form
                 document.getElementById('genreNameInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 document.getElementById('genreNameInput').focus();
@@ -540,6 +564,10 @@
             function resetGenreForm() {
                 document.getElementById('genreIdInput').value = '';
                 document.getElementById('genreNameInput').value = '';
+                
+                // Reset UI to Add Mode
+                document.getElementById('saveGenreBtn').innerHTML = '<i class="bi bi-plus-lg"></i> Ajouter';
+                document.getElementById('cancelGenreBtn').style.display = 'none';
             }
         </script>
         </body>
