@@ -7,6 +7,7 @@ import org.example.javaprojet.Services.ContenuService;
 import org.example.javaprojet.Services.FeedbackService;
 import org.example.javaprojet.Services.ParticipationService;
 import org.example.javaprojet.Services.UtilisateurContenuFavoriService;
+import org.example.javaprojet.Services.WatchHistoryService;
 
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ public class MovieController {
     private final FeedbackService feedbackService;
     private final ParticipationService participationService;
     private final UtilisateurContenuFavoriService favoriteService;
+    private final WatchHistoryService watchHistoryService;
 
     @GetMapping
     public String listMovies(@RequestParam(required = false) String search, Model model) {
@@ -48,6 +50,9 @@ public class MovieController {
             boolean isFavorite = favoriteService.getFavorisByUtilisateur(user.getUtilisateurId()).stream()
                     .anyMatch(f -> f.getContenuId().equals(id));
             model.addAttribute("isFavorite", isFavorite);
+
+            // Add to Watch History
+            watchHistoryService.addToHistory(user.getId(), movie);
         }
 
         if ("Serie".equalsIgnoreCase(movie.getTypeContenu())) {

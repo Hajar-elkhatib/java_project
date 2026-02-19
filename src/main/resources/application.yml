@@ -1,9 +1,16 @@
 server:
-  port: 9090
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
 
 spring:
+  messages:
+    encoding: UTF-8
   application:
-    name: java_project
+   name: java_project
   data:
     mongodb:
       auto-index-creation: true
