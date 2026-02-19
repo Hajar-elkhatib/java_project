@@ -14,50 +14,6 @@
                             </div>
                         </div>
 
-<<<<<<< Updated upstream
-                    <div class="bg-white/5 border border-white/5 rounded-2xl p-6">
-                        <c:if test="${empty comments}">
-                            <div class="py-12 text-center">
-                                <p class="text-gray-600 italic">Pas encore de commentaires pour ce film.</p>
-                            </div>
-                        </c:if>
-                        
-                        <c:if test="${not empty comments}">
-                            <div class="space-y-6">
-                                <c:forEach items="${comments}" var="comment">
-                                    <div class="border-b border-white/5 pb-6 last:border-0 last:pb-0">
-                                        <div class="flex justify-between items-start mb-4">
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center font-bold text-xs uppercase">
-                                                    <c:choose>
-                                                        <c:when test="${not empty comment.utilisateurNom}">
-                                                            ${comment.utilisateurNom.substring(0,1)}
-                                                        </c:when>
-                                                        <c:otherwise>U</c:otherwise>
-                                                    </c:choose>
-                                                </div>
-                                                <div>
-                                                    <h4 class="font-bold text-sm">
-                                                        <c:out value="${not empty comment.utilisateurNom ? comment.utilisateurNom : 'Utilisateur anonyme'}" />
-                                                    </h4>
-                                                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">
-                                                        <fmt:formatDate value="${comment.dateCreation}" pattern="dd MMM yyyy" />
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <c:if test="${sessionScope.user.role == 'ADMIN'}">
-                                                <form action="${pageContext.request.contextPath}/admin/comments/block/${comment.id}" method="post">
-                                                    <input type="hidden" name="movieId" value="${movie.id}">
-                                                    <button type="submit" class="text-red-500 text-xs hover:underline">Bloquer</button>
-                                                </form>
-                                            </c:if>
-                                        </div>
-                                        <p class="text-gray-300 text-sm leading-relaxed">${comment.texte}</p>
-                                    </div>
-                                </c:forEach>
-                            </div>
-                        </c:if>
-=======
                         <div
                             class="relative h-full flex flex-col md:flex-row items-center justify-center gap-8 px-4 md:px-12 max-w-7xl mx-auto">
                             <!-- Poster -->
@@ -128,7 +84,6 @@
                                 </div>
                             </div>
                         </div>
->>>>>>> Stashed changes
                     </div>
 
                     <div class="max-w-7xl mx-auto px-4 md:px-12 py-16 grid lg:grid-cols-3 gap-12">
@@ -150,109 +105,80 @@
                                 </div>
                             </c:if>
 
-                            <!-- Premium Comments Section -->
-                            <div class="comment-section-wrapper">
-                                <div class="flex items-center justify-between mb-8">
-                                    <h2 class="text-3xl font-bold flex items-center gap-4">
-                                        <span class="w-1.5 h-8 bg-netflix-red rounded-full"></span>
-                                        Discussion <span
-                                            class="text-gray-500 text-xl font-normal">(${comments.size()})</span>
-                                    </h2>
-                                </div>
+                            <!-- Comments Section -->
+                            <div>
+                                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                                    <i class="bi bi-chat-left-text text-netflix-red"></i> Commentaires
+                                    (${comments.size()})
+                                </h2>
 
                                 <c:if test="${not empty sessionScope.user}">
-                                    <div class="comment-form-container">
-                                        <form action="${pageContext.request.contextPath}/movies/${movie.id}/comment"
-                                            method="post" class="flex gap-6">
-                                            <div
-                                                class="w-12 h-12 flex-none rounded-full comment-avatar flex items-center justify-center text-white font-bold text-lg border border-white/10">
-                                                ${sessionScope.user.prenom.substring(0,1)}
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="relative group">
-                                                    <textarea name="texte" required rows="3"
-                                                        class="w-full comment-textarea rounded-2xl p-5 text-gray-200 placeholder-gray-500 text-lg focus:outline-none resize-none"
-                                                        placeholder="Partagez votre avis sur ce film..."></textarea>
-                                                    <div
-                                                        class="absolute bottom-4 right-4 flex items-center gap-3 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
-                                                        <span class="text-xs text-gray-500 font-medium">Public</span>
-                                                        <button type="submit"
-                                                            class="bg-netflix-red hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold text-sm transition-all transform hover:scale-105 shadow-lg shadow-red-900/20">
-                                                            Publier
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
+                                    <form action="${pageContext.request.contextPath}/movies/${movie.id}/comment"
+                                        method="post" class="mb-10 bg-white/5 p-6 rounded-2xl border border-white/10">
+                                        <textarea name="texte" required rows="3"
+                                            class="w-full bg-netflix-black border border-white/10 rounded-xl p-4 text-white focus:ring-2 focus:ring-netflix-red focus:border-transparent transition-all"
+                                            placeholder="Laissez un commentaire..."></textarea>
+                                        <div class="mt-4 flex justify-end">
+                                            <button type="submit"
+                                                class="bg-netflix-red text-white px-8 py-2 rounded-lg font-bold hover:bg-red-700 transition-all">
+                                                Publier
+                                            </button>
+                                        </div>
+                                    </form>
                                 </c:if>
                                 <c:if test="${empty sessionScope.user}">
                                     <div
-                                        class="mb-12 py-8 bg-white/5 rounded-2xl border border-dashed border-white/10 text-center backdrop-blur-sm">
-                                        <div class="mb-4 text-4xl">🔒</div>
-                                        <h3 class="text-lg font-bold text-white mb-2">Rejoignez la discussion</h3>
-                                        <p class="text-gray-400 mb-6">Connectez-vous pour partager votre avis avec la
-                                            communauté.</p>
-                                        <a href="${pageContext.request.contextPath}/login"
-                                            class="inline-block bg-white text-black px-8 py-3 rounded-full font-bold hover:bg-gray-200 transition-all">
-                                            Se connecter
-                                        </a>
+                                        class="mb-10 p-6 bg-white/5 rounded-2xl border border-dashed border-white/20 text-center">
+                                        <p class="text-gray-400 text-sm">Veuillez vous <a
+                                                href="${pageContext.request.contextPath}/login"
+                                                class="text-white font-bold underline">connecter</a> pour laisser un
+                                            commentaire.</p>
                                     </div>
                                 </c:if>
 
-                                <div class="space-y-8">
+                                <div class="space-y-6">
                                     <c:forEach items="${comments}" var="comment">
-                                        <div class="comment-card p-6 flex gap-5 group">
-                                            <div
-                                                class="w-10 h-10 flex-none rounded-full comment-avatar flex items-center justify-center text-gray-300 font-bold border border-white/5">
-                                                <c:choose>
-                                                    <c:when test="${not empty comment.utilisateurNom}">
-                                                        ${comment.utilisateurNom.substring(0,1)}
-                                                    </c:when>
-                                                    <c:otherwise>U</c:otherwise>
-                                                </c:choose>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="flex items-center justify-between mb-2">
-                                                    <div class="flex items-center gap-3">
-                                                        <h4 class="font-bold text-white text-sm tracking-wide">
+                                        <div class="bg-white/5 border border-white/5 p-6 rounded-2xl">
+                                            <div class="flex justify-between items-start mb-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center font-bold text-xs uppercase">
+                                                        <c:choose>
+                                                            <c:when test="${not empty comment.utilisateurNom}">
+                                                                ${comment.utilisateurNom.substring(0,1)}
+                                                            </c:when>
+                                                            <c:otherwise>U</c:otherwise>
+                                                        </c:choose>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-bold text-sm">
                                                             <c:out
                                                                 value="${not empty comment.utilisateurNom ? comment.utilisateurNom : 'Utilisateur anonyme'}" />
                                                         </h4>
-                                                        <span class="text-gray-600 text-xs">•</span>
-                                                        <span class="text-gray-500 text-xs font-medium">
+                                                        <span
+                                                            class="text-[10px] text-gray-500 uppercase tracking-widest">
                                                             <fmt:formatDate value="${comment.dateCreation}"
                                                                 pattern="dd MMM yyyy" />
                                                         </span>
                                                     </div>
-                                                    <c:if test="${sessionScope.user.role == 'ADMIN'}">
-                                                        <form
-                                                            action="${pageContext.request.contextPath}/admin/comments/block/${comment.id}"
-                                                            method="post"
-                                                            class="opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <input type="hidden" name="movieId" value="${movie.id}">
-                                                            <button type="submit"
-                                                                class="text-gray-500 hover:text-red-500 text-xs font-semibold py-1 px-3 rounded-full hover:bg-red-500/10 transition-all">
-                                                                <i class="bi bi-shield-x"></i> Supprimer
-                                                            </button>
-                                                        </form>
-                                                    </c:if>
                                                 </div>
-                                                <p
-                                                    class="text-gray-300 text-base leading-relaxed font-light opacity-90">
-                                                    ${comment.texte}
-                                                </p>
+                                                <c:if test="${sessionScope.user.role == 'ADMIN'}">
+                                                    <form
+                                                        action="${pageContext.request.contextPath}/admin/comments/block/${comment.id}"
+                                                        method="post">
+                                                        <input type="hidden" name="movieId" value="${movie.id}">
+                                                        <button type="submit"
+                                                            class="text-red-500 text-xs hover:underline">Bloquer</button>
+                                                    </form>
+                                                </c:if>
                                             </div>
+                                            <p class="text-gray-300 text-sm leading-relaxed">${comment.texte}</p>
                                         </div>
                                     </c:forEach>
 
                                     <c:if test="${empty comments}">
-                                        <div class="py-16 text-center opacity-50">
-                                            <div class="text-5xl mb-4 text-gray-700"><i class="bi bi-chat-quote"></i>
-                                            </div>
-                                            <p class="text-gray-400 font-light text-lg">Soyez le premier à partager
-                                                votre avis sur <span
-                                                    class="font-bold text-gray-300">${movie.titre}</span>.</p>
+                                        <div class="py-12 text-center">
+                                            <p class="text-gray-600 italic">Pas encore de commentaires pour ce film.</p>
                                         </div>
                                     </c:if>
                                 </div>
