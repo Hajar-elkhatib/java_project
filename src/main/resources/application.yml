@@ -1,3 +1,5 @@
+server:
+  port: 9090
 
 spring:
   application:
@@ -10,7 +12,9 @@ spring:
     view:
       prefix: /WEB-INF/
       suffix: .jsp
-
+ai:
+  service:
+    url: http://localhost:5000
 logging:
   level:
     org:
