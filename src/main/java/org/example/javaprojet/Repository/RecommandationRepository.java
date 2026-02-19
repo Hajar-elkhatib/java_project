@@ -8,5 +8,8 @@ import java.util.List;
 
 @Repository
 public interface RecommandationRepository extends MongoRepository<Recommandation, String> {
+
     List<Recommandation> findByUtilisateurId(String utilisateurId);
+
+    void deleteByUtilisateurId(String utilisateurId);
 }
