@@ -23,6 +23,8 @@ public class MovieController {
     private final FeedbackService feedbackService;
     private final ParticipationService participationService;
     private final UtilisateurContenuFavoriService favoriteService;
+    private final org.example.javaprojet.Services.HistoriqueInteractionService historiqueService;
+    private final org.example.javaprojet.Services.BadgeService badgeService;
 
     @GetMapping
     public String listMovies(@RequestParam(required = false) String search, Model model) {
@@ -48,6 +50,13 @@ public class MovieController {
             boolean isFavorite = favoriteService.getFavorisByUtilisateur(user.getUtilisateurId()).stream()
                     .anyMatch(f -> f.getContenuId().equals(id));
             model.addAttribute("isFavorite", isFavorite);
+
+            // Log View Interaction
+            org.example.javaprojet.Entity.HistoriqueInteraction interaction = new org.example.javaprojet.Entity.HistoriqueInteraction();
+            interaction.setUtilisateurId(user.getUtilisateurId());
+            interaction.setContenuId(id);
+            interaction.setTypeInteraction("VUE");
+            historiqueService.ajouterInteraction(interaction);
         }
 
         if ("Serie".equalsIgnoreCase(movie.getTypeContenu())) {
@@ -64,19 +73,53 @@ public class MovieController {
     }
 
     @PostMapping("/{id}/comment")
-    public String addComment(@PathVariable String id, @RequestParam String texte, HttpSession session) {
+    public String addComment(@PathVariable String id, @RequestParam String texte, HttpSession session,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         Utilisateur user = (Utilisateur) session.getAttribute("user");
         if (user != null) {
+            if (!badgeService.canPerformAction(user.getUtilisateurId(), "COMMENTAIRE")) {
+                redirectAttributes.addFlashAttribute("error",
+                        "Limite de commentaires atteinte pour aujourd'hui. Augmentez votre badge en participant davantage !");
+                return "redirect:/movies/" + id;
+            }
+
             feedbackService.addComment(texte, user.getUtilisateurId(), user.getNom() + " " + user.getPrenom(), id);
+
+            // Log Comment Interaction
+            org.example.javaprojet.Entity.HistoriqueInteraction interaction = new org.example.javaprojet.Entity.HistoriqueInteraction();
+            interaction.setUtilisateurId(user.getUtilisateurId());
+            interaction.setContenuId(id);
+            interaction.setTypeInteraction("COMMENTAIRE");
+            historiqueService.ajouterInteraction(interaction);
+
+            // Check for badge upgrade
+            badgeService.updateAndGetBadge(user.getUtilisateurId());
         }
         return "redirect:/movies/" + id;
     }
 
     @PostMapping("/{id}/rate")
-    public String rateMovie(@PathVariable String id, @RequestParam int note, HttpSession session) {
+    public String rateMovie(@PathVariable String id, @RequestParam int note, HttpSession session,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         Utilisateur user = (Utilisateur) session.getAttribute("user");
         if (user != null) {
+            if (!badgeService.canPerformAction(user.getUtilisateurId(), "EVALUATION")) {
+                redirectAttributes.addFlashAttribute("error",
+                        "Limite de notes atteinte pour aujourd'hui. Augmentez votre badge en participant davantage !");
+                return "redirect:/movies/" + id;
+            }
+
             feedbackService.addOrUpdateRating(user.getUtilisateurId(), id, note);
+
+            // Log Rating Interaction
+            org.example.javaprojet.Entity.HistoriqueInteraction interaction = new org.example.javaprojet.Entity.HistoriqueInteraction();
+            interaction.setUtilisateurId(user.getUtilisateurId());
+            interaction.setContenuId(id);
+            interaction.setTypeInteraction("EVALUATION");
+            historiqueService.ajouterInteraction(interaction);
+
+            // Check for badge upgrade
+            badgeService.updateAndGetBadge(user.getUtilisateurId());
         }
         return "redirect:/movies/" + id;
     }

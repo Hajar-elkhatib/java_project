@@ -14,12 +14,21 @@ import jakarta.servlet.http.HttpSession;
 public class FavoriteController {
 
     private final UtilisateurContenuFavoriService favoriteService;
+    private final org.example.javaprojet.Services.HistoriqueInteractionService historiqueService;
+    private final org.example.javaprojet.Services.BadgeService badgeService;
 
     @PostMapping("/add/{contenuId}")
-    public String addFavorite(@PathVariable String contenuId, HttpSession session) {
+    public String addFavorite(@PathVariable String contenuId, HttpSession session,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         Utilisateur user = (Utilisateur) session.getAttribute("user");
         if (user == null)
             return "redirect:/login";
+
+        if (!badgeService.canPerformAction(user.getUtilisateurId(), "FAVORI")) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Limite de favoris atteinte pour aujourd'hui. Augmentez votre badge pour en ajouter plus !");
+            return "redirect:/movies/" + contenuId;
+        }
 
         Utilisateur_Contenu_Favori favori = new Utilisateur_Contenu_Favori();
         favori.setUtilisateurId(user.getUtilisateurId());
@@ -27,6 +36,16 @@ public class FavoriteController {
 
         try {
             favoriteService.ajouterFavori(favori);
+
+            // Log Like Interaction
+            org.example.javaprojet.Entity.HistoriqueInteraction interaction = new org.example.javaprojet.Entity.HistoriqueInteraction();
+            interaction.setUtilisateurId(user.getUtilisateurId());
+            interaction.setContenuId(contenuId);
+            interaction.setTypeInteraction("LIKE");
+            historiqueService.ajouterInteraction(interaction);
+
+            // Check for badge update
+            badgeService.updateAndGetBadge(user.getUtilisateurId());
         } catch (Exception e) {
             // Already in favorites, ignore or handle
         }

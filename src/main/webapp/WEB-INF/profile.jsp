@@ -14,8 +14,13 @@
                 <h2 class="text-xl font-bold text-white mb-1">${sessionScope.user.nom} ${sessionScope.user.prenom}</h2>
                 <p class="text-gray-500 text-sm mb-6">${sessionScope.user.email}</p>
                 
-                <div class="inline-flex items-center gap-2 bg-yellow-500/10 text-yellow-500 px-4 py-1.5 rounded-full text-xs font-bold border border-yellow-500/20">
-                    <i class="bi bi-star-fill"></i> Niveau ${sessionScope.user.niveauBadge}
+                <div class="space-y-2">
+                    <div class="inline-flex items-center gap-2 bg-yellow-500/10 text-yellow-500 px-4 py-1.5 rounded-full text-xs font-bold border border-yellow-500/20">
+                        <i class="bi bi-star-fill"></i> ${badge.nom} (Niveau ${badge.niveau})
+                    </div>
+                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                        Score d'activité: <span class="text-white">${score}</span>
+                    </div>
                 </div>
 
                 <div class="mt-10 space-y-2">
@@ -109,7 +114,7 @@
             <div id="history-section" class="section-content hidden bg-netflix-darkGray/50 border border-white/5 rounded-2xl p-8 md:p-10">
                 <h3 class="text-2xl font-bold text-white mb-8 border-b border-white/5 pb-4">Historique de visionnage</h3>
                 
-                <c:if test="${empty historyMovies}">
+                <c:if test="${empty historyItems}">
                     <div class="text-center py-10">
                         <i class="bi bi-clock-history text-4xl text-gray-600 mb-4 block"></i>
                         <p class="text-gray-500">Aucun historique disponible.</p>
@@ -117,13 +122,26 @@
                 </c:if>
 
                 <div class="space-y-4">
-                    <c:forEach items="${historyMovies}" var="movie">
+                    <c:forEach items="${historyItems}" var="item">
+                        <c:set var="movie" value="${item.movie}" />
                         <div class="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
                             <div class="w-16 h-24 flex-none rounded bg-netflix-black overflow-hidden relative">
                                 <img src="${not empty movie.posterUrl ? movie.posterUrl : 'https://via.placeholder.com/100x150'}" 
                                      class="w-full h-full object-cover">
                             </div>
                             <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest 
+                                        ${item.typeInteraction == 'VUE' ? 'text-blue-400' : ''}
+                                        ${item.typeInteraction == 'LIKE' ? 'text-red-400' : ''}
+                                        ${item.typeInteraction == 'COMMENTAIRE' ? 'text-green-400' : ''}
+                                        ${item.typeInteraction == 'EVALUATION' ? 'text-yellow-400' : ''}">
+                                        ${item.typeInteraction}
+                                    </span>
+                                    <span class="text-[10px] text-gray-500">
+                                        <fmt:formatDate value="${item.date}" pattern="dd/MM HH:mm" />
+                                    </span>
+                                </div>
                                 <h4 class="font-bold text-white text-lg truncate">${movie.titre}</h4>
                                 <div class="flex items-center gap-2 text-xs text-gray-400 mt-1">
                                     <span class="px-2 py-0.5 border border-white/20 rounded">${movie.typeContenu}</span>

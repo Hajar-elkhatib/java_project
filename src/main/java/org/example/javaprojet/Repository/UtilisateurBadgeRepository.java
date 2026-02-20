@@ -14,4 +14,6 @@ public interface UtilisateurBadgeRepository extends MongoRepository<Utilisateur_
     List<Utilisateur_Badge> findByBadgeId(String badgeId);
 
     long countByUtilisateurId(String utilisateurId);
+
+    java.util.Optional<Utilisateur_Badge> findTopByUtilisateurIdOrderByDateAttributionDesc(String utilisateurId);
 }

@@ -11,4 +11,8 @@ public interface EvaluationRepository extends MongoRepository<Evaluation, String
     Optional<Evaluation> findByUtilisateurIdAndContenuId(String utilisateurId, String contenuId);
 
     List<Evaluation> findByUtilisateurId(String utilisateurId);
+
+    long countByUtilisateurId(String utilisateurId);
+
+    long countByUtilisateurIdAndDateEvaluationGreaterThan(String utilisateurId, java.util.Date date);
 }

@@ -13,4 +13,6 @@ public interface UtilisateurContenuFavoriRepository extends MongoRepository<Util
     boolean existsByUtilisateurIdAndContenuId(String utilisateurId, String contenuId);
 
     long countByUtilisateurId(String utilisateurId);
+
+    long countByUtilisateurIdAndDateAjouterGreaterThan(String utilisateurId, java.util.Date date);
 }

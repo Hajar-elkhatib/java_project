@@ -3,6 +3,14 @@
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
 <div class="min-h-screen bg-netflix-black pt-20">
+    <c:if test="${not empty error}">
+        <div class="max-w-7xl mx-auto px-4 md:px-12 mt-6">
+            <div class="bg-red-500/10 border border-red-500/20 text-red-500 px-6 py-4 rounded-xl flex items-center gap-4 animate-bounce">
+                <i class="bi bi-exclamation-triangle-fill text-xl"></i>
+                <p class="font-medium text-sm">${error}</p>
+            </div>
+        </div>
+    </c:if>
     <c:if test="${not empty movie}">
         <!-- Hero Section for Details -->
         <div class="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">

@@ -10,4 +10,8 @@ public interface CommentaireRepository extends MongoRepository<Commentaire, Stri
     List<Commentaire> findByContenuIdAndIsBlockedFalse(String contenuId);
 
     List<Commentaire> findByUtilisateurId(String utilisateurId);
+
+    long countByUtilisateurId(String utilisateurId);
+
+    long countByUtilisateurIdAndDateCreationGreaterThan(String utilisateurId, java.util.Date date);
 }

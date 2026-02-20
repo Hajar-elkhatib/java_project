@@ -14,6 +14,11 @@ public class Badge {
     @Id
     private String id;
     private String nom;
+    private int niveau;
     private String description;
-    private String conditionBadge;
+    private int scoreMin;
+    private int scoreMax;
+    private int limiteNotesParJour;
+    private int limiteCommentairesParJour;
+    private int limiteFavorisParJour;
 }

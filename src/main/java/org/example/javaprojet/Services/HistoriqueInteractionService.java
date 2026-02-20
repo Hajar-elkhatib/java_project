@@ -13,8 +13,24 @@ import java.util.List;
 public class HistoriqueInteractionService {
     private final HistoriqueInteractionRepository repository;
 
-    // ➕ Ajouter interaction
+    // ➕ Ajouter interaction avec déduplication (1 VUE par jour par contenu)
     public HistoriqueInteraction ajouterInteraction(HistoriqueInteraction interaction) {
+        if ("VUE".equalsIgnoreCase(interaction.getTypeInteraction())) {
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+            cal.set(java.util.Calendar.MINUTE, 0);
+            cal.set(java.util.Calendar.SECOND, 0);
+            cal.set(java.util.Calendar.MILLISECOND, 0);
+            java.util.Date todayStart = cal.getTime();
+
+            boolean exists = repository.existsByUtilisateurIdAndContenuIdAndTypeInteractionAndDateHeureGreaterThan(
+                    interaction.getUtilisateurId(), interaction.getContenuId(), "VUE", todayStart);
+
+            if (exists) {
+                return null; // Déjà vu aujourd'hui, on n'enregistre pas de doublon
+            }
+        }
+
         interaction.setDateHeure(new Date());
         return repository.save(interaction);
     }

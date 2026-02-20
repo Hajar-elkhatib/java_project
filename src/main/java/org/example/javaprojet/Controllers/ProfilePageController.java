@@ -1,6 +1,7 @@
 package org.example.javaprojet.Controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.example.javaprojet.Entity.Badge;
 import org.example.javaprojet.Entity.Contenu;
 import org.example.javaprojet.Entity.HistoriqueInteraction;
 import org.example.javaprojet.Entity.Utilisateur;
@@ -24,7 +25,7 @@ public class ProfilePageController {
 
     private final UtilisateurService utilisateurService;
     private final UtilisateurContenuFavoriService favoriService;
-    private final UtilisateurBadgeService badgeService;
+    private final org.example.javaprojet.Services.BadgeService badgeService;
     private final HistoriqueInteractionService historiqueService;
     private final ContenuService contenuService;
 
@@ -38,11 +39,23 @@ public class ProfilePageController {
         user = utilisateurService.getUtilisateurById(user.getUtilisateurId());
         session.setAttribute("user", user);
 
+        // Fetch current badge and score
+        Badge currentBadge = badgeService.updateAndGetBadge(user.getUtilisateurId());
+        double currentScore = badgeService.calculateUserScore(user.getUtilisateurId());
+
         // Fetch Stats
         long favCount = favoriService.countByUtilisateur(user.getUtilisateurId());
-        long badgeCount = badgeService.countByUtilisateur(user.getUtilisateurId());
+        long badgeCount = 1; // Default to at least 1 badge
         long watchedCount = historiqueService.countByUtilisateur(user.getUtilisateurId(), "VUE");
 
+        // Sync niveauBadge if needed
+        if (user.getNiveauBadge() != currentBadge.getNiveau()) {
+            user.setNiveauBadge(currentBadge.getNiveau());
+            utilisateurService.updateUtilisateur(user.getUtilisateurId(), user);
+        }
+
+        model.addAttribute("badge", currentBadge);
+        model.addAttribute("score", currentScore);
         model.addAttribute("favCount", favCount);
         model.addAttribute("badgeCount", badgeCount);
         model.addAttribute("watchedCount", watchedCount);
@@ -54,19 +67,20 @@ public class ProfilePageController {
         List<Contenu> favoriteMovies = contenuService.getContenusByIds(favIds);
         model.addAttribute("favoriteMovies", favoriteMovies);
 
-        // Fetch History List (VUE only for simplicity in display, or all)
+        // Fetch History List
         List<HistoriqueInteraction> history = historiqueService.getByUtilisateur(user.getUtilisateurId());
-        // We need to map history to content manually in JSP or prepare a DTO.
-        // Simpler approach: pass all history and let JSP loop, but we need content
-        // details.
-        // Let's passed contents related to history
-        List<String> historyContentIds = history.stream().map(HistoriqueInteraction::getContenuId)
-                .collect(Collectors.toList());
-        List<Contenu> historyMovies = contenuService.getContenusByIds(historyContentIds);
-        model.addAttribute("historyMovies", historyMovies);
-        // Note: Linking history items to movies might require a Map or DTO if we want
-        // to show "Date - Movie".
-        // For now, let's just show the list of movies found in history.
+        List<org.example.javaprojet.DTO.HistoryDTO> historyDTOs = history.stream().map(h -> {
+            org.example.javaprojet.DTO.HistoryDTO dto = new org.example.javaprojet.DTO.HistoryDTO();
+            dto.setId(h.getId());
+            dto.setTypeInteraction(h.getTypeInteraction());
+            dto.setDate(h.getDateHeure());
+            dto.setMovie(contenuService.getContenuById(h.getContenuId()));
+            return dto;
+        }).collect(Collectors.toList());
+
+        // Reverse history to show latest first
+        java.util.Collections.reverse(historyDTOs);
+        model.addAttribute("historyItems", historyDTOs);
 
         return "profile";
     }
