@@ -15,6 +15,11 @@ public class GenreService {
 
     // ➕ Ajouter genre
     public Genre ajouterGenre(Genre genre) {
+        // Defensive check: if ID is empty, make it null
+        if (genre.getId() != null && genre.getId().trim().isEmpty()) {
+            genre.setId(null);
+        }
+
         if (genreRepository.findByNomIgnoreCase(genre.getNom()).isPresent()) {
             throw new RuntimeException("Un genre avec ce nom existe déjà.");
         }

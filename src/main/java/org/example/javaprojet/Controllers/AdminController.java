@@ -80,7 +80,7 @@ public class AdminController {
         model.addAttribute("isEdit", true);
 
         // Load Seasons and Episodes if it's a Series
-        if ("SERIE".equals(content.getTypeContenu())) {
+        if ("SERIE".equalsIgnoreCase(content.getTypeContenu())) {
             List<org.example.javaprojet.Entity.Saison> saisons = contenuService.getSaisonsByContenuId(id);
             model.addAttribute("saisons", saisons);
 
@@ -132,18 +132,36 @@ public class AdminController {
     // --- Gestion des Genres ---
 
     @PostMapping("/genres/save")
-    public String saveGenre(@ModelAttribute org.example.javaprojet.Entity.Genre genre) {
-        if (genre.getId() != null && !genre.getId().isEmpty()) {
-            genreService.modifierGenre(genre.getId(), genre);
-        } else {
-            genreService.ajouterGenre(genre);
+    public String saveGenre(@ModelAttribute org.example.javaprojet.Entity.Genre genre,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            // Check if ID is empty string and force to null
+            if (genre.getId() != null && genre.getId().trim().isEmpty()) {
+                genre.setId(null);
+            }
+
+            if (genre.getId() != null) {
+                genreService.modifierGenre(genre.getId(), genre);
+                redirectAttributes.addFlashAttribute("successMessage", "Genre modifié avec succès !");
+            } else {
+                genreService.ajouterGenre(genre);
+                redirectAttributes.addFlashAttribute("successMessage", "Genre ajouté avec succès !");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/admin/dashboard#genres";
     }
 
     @PostMapping("/genres/delete/{id}")
-    public String deleteGenre(@PathVariable String id) {
-        genreService.supprimerGenre(id);
+    public String deleteGenre(@PathVariable String id,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            genreService.supprimerGenre(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Genre supprimé avec succès !");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la suppression du genre.");
+        }
         return "redirect:/admin/dashboard#genres";
     }
 }

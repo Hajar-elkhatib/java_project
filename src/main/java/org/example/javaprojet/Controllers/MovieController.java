@@ -30,8 +30,10 @@ public class MovieController {
     public String listMovies(@RequestParam(required = false) String search, Model model) {
         if (search != null && !search.isEmpty()) {
             model.addAttribute("contents", contenuService.searchContenus(search));
+            model.addAttribute("pageTitle", "Résultats pour \"" + search + "\"");
         } else {
-            model.addAttribute("contents", contenuService.getAllContenus());
+            model.addAttribute("contents", contenuService.getContenusByType("Film"));
+            model.addAttribute("pageTitle", "Films");
         }
         return "movies";
     }

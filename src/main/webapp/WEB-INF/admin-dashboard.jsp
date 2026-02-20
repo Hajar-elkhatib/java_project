@@ -449,61 +449,106 @@
                 <i class="bi bi-tags"></i> Gestion des genres
             </h1>
 
-            <div class="card p-6 mb-6">
-                <h2 class="text-xl font-bold mb-4">Ajouter / Modifier un genre</h2>
-                <form action="${pageContext.request.contextPath}/admin/genres/save" method="post"
-                    class="flex gap-4 items-end" autocomplete="off">
-                    <input type="hidden" name="id" id="genreIdInput" value="">
-                    <div class="flex-1">
-                        <label class="block text-sm text-gray-400 mb-1">Nom du genre</label>
-                        <input type="text" name="nom" id="genreNameInput" required
-                            class="w-full px-4 py-2 border border-zinc-800 bg-zinc-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
-                            placeholder="Ex: Action, Comédie...">
-                    </div>
-                    <button type="submit" class="btn-primary" id="saveGenreBtn">
-                        <i class="bi bi-plus-lg"></i> Ajouter
-                    </button>
-                    <button type="button" onclick="resetGenreForm()" id="cancelGenreBtn" style="display:none;"
-                        class="btn-primary bg-gray-600 hover:bg-gray-700">
-                        <i class="bi bi-x-lg"></i> Annuler
-                    </button>
-                </form>
-            </div>
+            <!-- Feedback Messages -->
+            <c:if test="${not empty successMessage}">
+                <div class="mb-6 p-4 bg-green-500/10 border border-green-500/50 text-green-500 rounded-lg flex items-center gap-3">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <p>${successMessage}</p>
+                </div>
+            </c:if>
+            <c:if test="${not empty errorMessage}">
+                <div class="mb-6 p-4 bg-red-500/10 border border-red-500/50 text-red-500 rounded-lg flex items-center gap-3">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <p>${errorMessage}</p>
+                </div>
+            </c:if>
 
-            <div class="card p-6">
-                <h2 class="text-xl font-bold mb-6">Liste des genres</h2>
-                <div class="overflow-x-auto">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nom</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${genres}" var="g">
-                                <tr>
-                                    <td><span class="font-mono text-sm text-gray-500">${g.id}</span></td>
-                                    <td class="font-bold text-lg">${g.nom}</td>
-                                    <td>
-                                        <div class="flex gap-2">
-                                            <button onclick="editGenre('${g.id}', '${g.nom}')" class="btn-edit">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <form action="${pageContext.request.contextPath}/admin/genres/delete/${g.id}"
-                                                method="post" style="display:inline;">
-                                                <button type="submit" class="btn-danger"
-                                                    onclick="return confirm('Supprimer ce genre ?')">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Form Column -->
+                <div class="lg:col-span-1">
+                    <div class="card p-6 sticky top-6">
+                        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                            <span id="formActionTitle">Ajouter</span> un genre
+                        </h2>
+                        <form action="${pageContext.request.contextPath}/admin/genres/save" method="post"
+                            class="space-y-4" autocomplete="off">
+                            <input type="hidden" name="id" id="genreIdInput" value="">
+                            
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Nom du genre</label>
+                                <input type="text" name="nom" id="genreNameInput" required
+                                    class="w-full px-4 py-3 border border-zinc-800 bg-zinc-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 transition-all"
+                                    placeholder="Ex: Action, Comédie...">
+                            </div>
+
+                            <div class="flex flex-col gap-2">
+                                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2" id="saveGenreBtn">
+                                    <i class="bi bi-plus-lg"></i> <span id="btnText">Ajouter</span>
+                                </button>
+                                <button type="button" onclick="resetGenreForm()" id="cancelGenreBtn" style="display:none;"
+                                    class="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2">
+                                    <i class="bi bi-x-lg"></i> Annuler
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Table Column -->
+                <div class="lg:col-span-2">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-bold mb-6">Liste des genres (${genres.size()})</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="w-1/3">ID</th>
+                                        <th class="w-1/3">Nom</th>
+                                        <th class="w-1/3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="${genres}" var="g">
+                                        <tr class="group">
+                                            <td class="py-4">
+                                                <span class="font-mono text-[10px] text-gray-500 bg-zinc-900 px-2 py-1 rounded border border-zinc-800">
+                                                    ${g.id}
+                                                </span>
+                                            </td>
+                                            <td class="py-4">
+                                                <span class="text-white font-medium text-lg leading-none">${g.nom}</span>
+                                            </td>
+                                            <td class="py-4 text-right">
+                                                <div class="flex gap-2 justify-end">
+                                                    <button onclick="editGenre('${g.id}', '${g.nom}')" 
+                                                            class="p-2 bg-blue-600/10 text-blue-500 border border-blue-500/20 rounded hover:bg-blue-600 hover:text-white transition-all"
+                                                            title="Modifier">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                    <form action="${pageContext.request.contextPath}/admin/genres/delete/${g.id}"
+                                                        method="post" class="inline">
+                                                        <button type="submit" 
+                                                                class="p-2 bg-red-600/10 text-red-500 border border-red-500/20 rounded hover:bg-red-600 hover:text-white transition-all"
+                                                                onclick="return confirm('Attention: Supprimer ce genre le retirera de tous les films associés. Continuer ?')"
+                                                                title="Supprimer">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                    <c:if test="${empty genres}">
+                                        <tr>
+                                            <td colspan="3" class="text-center py-12 text-gray-500 italic">
+                                                Aucun genre trouvé.
+                                            </td>
+                                        </tr>
+                                    </c:if>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -553,11 +598,13 @@
                 document.getElementById('genreNameInput').value = name;
                 
                 // Update UI for Edit Mode
-                document.getElementById('saveGenreBtn').innerHTML = '<i class="bi bi-check-lg"></i> Modifier';
-                document.getElementById('cancelGenreBtn').style.display = 'inline-block';
+                document.getElementById('formActionTitle').innerText = 'Modifier';
+                document.getElementById('btnText').innerText = 'Modifier';
+                document.getElementById('saveGenreBtn').classList.replace('bg-red-600', 'bg-blue-600');
+                document.getElementById('saveGenreBtn').classList.replace('hover:bg-red-700', 'hover:bg-blue-700');
+                document.getElementById('cancelGenreBtn').style.display = 'flex';
                 
                 // Scroll to form
-                document.getElementById('genreNameInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 document.getElementById('genreNameInput').focus();
             }
 
@@ -566,7 +613,10 @@
                 document.getElementById('genreNameInput').value = '';
                 
                 // Reset UI to Add Mode
-                document.getElementById('saveGenreBtn').innerHTML = '<i class="bi bi-plus-lg"></i> Ajouter';
+                document.getElementById('formActionTitle').innerText = 'Ajouter';
+                document.getElementById('btnText').innerText = 'Ajouter';
+                document.getElementById('saveGenreBtn').classList.replace('bg-blue-600', 'bg-red-600');
+                document.getElementById('saveGenreBtn').classList.replace('hover:bg-blue-700', 'hover:bg-red-700');
                 document.getElementById('cancelGenreBtn').style.display = 'none';
             }
         </script>
