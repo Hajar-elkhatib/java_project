@@ -20,6 +20,7 @@ public class HomeController {
 
     private final UtilisateurService utilisateurService;
     private final ContenuService contenuService;
+    private final org.example.javaprojet.Services.GenreService genreService;
 
     @GetMapping("/")
     public String home(HttpSession session, Model model) {
@@ -31,6 +32,7 @@ public class HomeController {
         List<Contenu> trending = contenuService.getTrendingContent();
         model.addAttribute("featuredContents", featured);
         model.addAttribute("trendingContents", trending);
+        model.addAttribute("genres", genreService.getAllGenres());
         return "index";
     }
 
@@ -40,16 +42,36 @@ public class HomeController {
     }
 
     @GetMapping("/series")
-    public String series(Model model) {
-        model.addAttribute("contents", contenuService.getContenusByType("Serie"));
-        model.addAttribute("pageTitle", "Séries");
+    public String series(@RequestParam(required = false) String genreId, Model model) {
+        model.addAttribute("genres", genreService.getAllGenres());
+        if (genreId != null && !genreId.isEmpty()) {
+            List<Contenu> filtered = contenuService.getContenusByGenre(genreId).stream()
+                    .filter(c -> "Serie".equalsIgnoreCase(c.getTypeContenu()))
+                    .collect(java.util.stream.Collectors.toList());
+            model.addAttribute("contents", filtered);
+            model.addAttribute("pageTitle", "Séries : " + genreService.getGenreById(genreId).getNom());
+            model.addAttribute("selectedGenreId", genreId);
+        } else {
+            model.addAttribute("contents", contenuService.getContenusByType("Serie"));
+            model.addAttribute("pageTitle", "Séries");
+        }
         return "movies";
     }
 
     @GetMapping("/documentaries")
-    public String documentaries(Model model) {
-        model.addAttribute("contents", contenuService.getContenusByType("Documentaire"));
-        model.addAttribute("pageTitle", "Documentaires");
+    public String documentaries(@RequestParam(required = false) String genreId, Model model) {
+        model.addAttribute("genres", genreService.getAllGenres());
+        if (genreId != null && !genreId.isEmpty()) {
+            List<Contenu> filtered = contenuService.getContenusByGenre(genreId).stream()
+                    .filter(c -> "Documentaire".equalsIgnoreCase(c.getTypeContenu()))
+                    .collect(java.util.stream.Collectors.toList());
+            model.addAttribute("contents", filtered);
+            model.addAttribute("pageTitle", "Documentaires : " + genreService.getGenreById(genreId).getNom());
+            model.addAttribute("selectedGenreId", genreId);
+        } else {
+            model.addAttribute("contents", contenuService.getContenusByType("Documentaire"));
+            model.addAttribute("pageTitle", "Documentaires");
+        }
         return "movies";
     }
 

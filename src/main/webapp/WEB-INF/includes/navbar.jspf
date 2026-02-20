@@ -18,15 +18,26 @@
     </div>
 
     <div class="flex items-center gap-4 md:gap-6">
-        <!-- Search Bar (Simplified) -->
-        <form action="${pageContext.request.contextPath}/movies" method="get" class="relative group hidden sm:block">
-            <input type="text" name="search" 
-                   class="bg-black/40 border border-gray-600 text-white text-sm rounded-full py-1.5 pl-4 pr-10 focus:outline-none focus:ring-1 focus:ring-netflix-red focus:border-netflix-red w-40 md:w-64 transition-all"
-                   placeholder="Titres, genres...">
-            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-white">
-                <i class="bi bi-search"></i>
-            </button>
-        </form>
+        <!-- Search & Filter Bar (Simplified) -->
+        <div class="hidden sm:flex items-center gap-2">
+            <!-- Genre Filter -->
+            <select onchange="if(this.value) window.location.href='${pageContext.request.contextPath}/movies?genreId=' + this.value; else window.location.href='${pageContext.request.contextPath}/movies';" 
+                    class="bg-black/40 border border-gray-600 text-white text-xs rounded-full py-1.5 px-3 focus:outline-none focus:ring-1 focus:ring-netflix-red focus:border-netflix-red transition-all cursor-pointer">
+                <option value="">Tous les genres</option>
+                <c:forEach items="${genres}" var="g">
+                    <option value="${g.id}" ${param.genreId == g.id || selectedGenreId == g.id ? 'selected' : ''}>${g.nom}</option>
+                </c:forEach>
+            </select>
+
+            <form action="${pageContext.request.contextPath}/movies" method="get" class="relative group">
+                <input type="text" name="search" value="${param.search}"
+                       class="bg-black/40 border border-gray-600 text-white text-sm rounded-full py-1.5 pl-4 pr-10 focus:outline-none focus:ring-1 focus:ring-netflix-red focus:border-netflix-red w-40 md:w-56 transition-all"
+                       placeholder="Rechercher...">
+                <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-white">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
 
         <!-- User Profile -->
         <div class="relative">

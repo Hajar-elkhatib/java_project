@@ -11,14 +11,29 @@
         </div>
         
         <!-- Search & Filter Bar -->
-        <form action="${pageContext.request.contextPath}/movies" method="get" class="flex items-center bg-white/5 border border-white/10 rounded-lg p-1 w-full md:w-96">
-            <input type="text" name="search" value="${param.search}" 
-                   class="bg-transparent border-none text-white text-sm py-2 px-4 focus:ring-0 w-full"
-                   placeholder="Rechercher...">
-            <button type="submit" class="bg-netflix-red text-white p-2 rounded-md hover:bg-red-700 transition-colors">
-                <i class="bi bi-search"></i>
-            </button>
-        </form>
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <!-- Genre Filter Dropdown -->
+            <select onchange="const url = new URL(window.location.href); if(this.value) url.searchParams.set('genreId', this.value); else url.searchParams.delete('genreId'); window.location.href=url.toString();" 
+                    class="bg-white/5 border border-white/10 text-white text-sm rounded-lg py-2 px-4 focus:ring-netflix-red focus:border-netflix-red w-full sm:w-48 cursor-pointer transition-all">
+                <option value="">Tous les genres</option>
+                <c:forEach items="${genres}" var="g">
+                    <option value="${g.id}" ${param.genreId == g.id || selectedGenreId == g.id ? 'selected' : ''}>${g.nom}</option>
+                </c:forEach>
+            </select>
+
+            <form action="${pageContext.request.contextPath}/movies" method="get" class="flex items-center bg-white/5 border border-white/10 rounded-lg p-1 w-full md:w-80">
+                <input type="text" name="search" value="${param.search}" 
+                       class="bg-transparent border-none text-white text-sm py-2 px-4 focus:ring-0 w-full"
+                       placeholder="Rechercher...">
+                <!-- Keep genreId if present -->
+                <c:if test="${not empty param.genreId}">
+                    <input type="hidden" name="genreId" value="${param.genreId}">
+                </c:if>
+                <button type="submit" class="bg-netflix-red text-white p-2 rounded-md hover:bg-red-700 transition-colors">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- Content Grid -->

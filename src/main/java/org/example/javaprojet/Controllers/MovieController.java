@@ -26,11 +26,21 @@ public class MovieController {
     private final org.example.javaprojet.Services.HistoriqueInteractionService historiqueService;
     private final org.example.javaprojet.Services.BadgeService badgeService;
 
+    private final org.example.javaprojet.Services.GenreService genreService;
+
     @GetMapping
-    public String listMovies(@RequestParam(required = false) String search, Model model) {
+    public String listMovies(@RequestParam(required = false) String search,
+            @RequestParam(required = false) String genreId,
+            Model model) {
+        model.addAttribute("genres", genreService.getAllGenres());
+
         if (search != null && !search.isEmpty()) {
             model.addAttribute("contents", contenuService.searchContenus(search));
             model.addAttribute("pageTitle", "Résultats pour \"" + search + "\"");
+        } else if (genreId != null && !genreId.isEmpty()) {
+            model.addAttribute("contents", contenuService.getContenusByGenre(genreId));
+            model.addAttribute("pageTitle", "Genre : " + genreService.getGenreById(genreId).getNom());
+            model.addAttribute("selectedGenreId", genreId);
         } else {
             model.addAttribute("contents", contenuService.getContenusByType("Film"));
             model.addAttribute("pageTitle", "Films");
