@@ -52,6 +52,11 @@ public class RecommandationController {
         List<Recommandation> recs = recommandationService.refreshRecommendations(userId);
         return ResponseEntity.ok(recs);
     }
+    @PostMapping("/retrain-all")
+    public ResponseEntity<Map<String, String>> retrainAll() {
+        recommandationService.retrainAndRefreshAllUsers();
+        return ResponseEntity.ok(Map.of("status", "retrained and refreshed all users"));
+    }
 
     /**
      * Save user's onboarding preferences (genres + films selected in the wizard).

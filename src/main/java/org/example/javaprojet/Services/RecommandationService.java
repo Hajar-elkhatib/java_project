@@ -185,6 +185,29 @@ public class RecommandationService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
+    public void retrainAndRefreshAllUsers() {
+        // Step 1 — Call Flask to retrain
+        webClient.post()
+                .uri("/retrain")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        // Step 2 — Delete ALL old recommendations
+        recommandationRepository.deleteAll();
+
+        // Step 3 — Regenerate for ALL users
+        List<Utilisateur> users = utilisateurRepository.findAll();
+        for (Utilisateur user : users) {
+            if (!user.isFirstLogin()) {
+                try {
+                    generateOnboardingRecommendations(user.getId());
+                } catch (Exception e) {
+                    System.err.println("Failed for user: " + user.getId());
+                }
+            }
+        }
+    }
 
     // ─────────────────────────────────────────────────────────
     //  Get raw Recommandation entities for a user
@@ -220,4 +243,5 @@ public class RecommandationService {
         @JsonProperty("score")
         private Float score;
     }
+
 }

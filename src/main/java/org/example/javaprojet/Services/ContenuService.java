@@ -3,6 +3,7 @@ package org.example.javaprojet.Services;
 import lombok.RequiredArgsConstructor;
 import org.example.javaprojet.Entity.*;
 import org.example.javaprojet.Repository.*;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +26,10 @@ public class ContenuService {
     private final EvaluationRepository evaluationRepository;
     private final UtilisateurContenuFavoriRepository favoriRepository;
     private final HistoriqueInteractionRepository interactionRepository;
+
+    // @Lazy to avoid circular dependency with RecommandationService
+    @Lazy
+    private final RecommandationService recommandationService;
 
     public List<Contenu> getAllContenus() {
         return contenuRepository.findAll();
@@ -80,8 +85,20 @@ public class ContenuService {
         return contenuRepository.findByGenreIdsContains(genreId);
     }
 
+    // ─────────────────────────────────────────────────────────
+    //  Save content + auto retrain AI model
+    // ─────────────────────────────────────────────────────────
     public Contenu saveContenu(Contenu contenu) {
-        return contenuRepository.save(contenu);
+        Contenu saved = contenuRepository.save(contenu);
+
+        // Auto retrain AI model when new content is added
+        try {
+            recommandationService.retrainAndRefreshAllUsers();
+        } catch (Exception e) {
+            System.err.println("⚠️ Auto retrain failed: " + e.getMessage());
+        }
+
+        return saved;
     }
 
     public void deleteContenu(String id) {

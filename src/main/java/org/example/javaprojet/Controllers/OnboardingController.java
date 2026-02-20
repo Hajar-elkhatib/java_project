@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.javaprojet.Entity.Utilisateur;
 import org.example.javaprojet.Services.ContenuService;
 import org.example.javaprojet.Services.GenreService;
+import org.example.javaprojet.Services.RecommandationService;
 import org.example.javaprojet.Services.UtilisateurService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ public class OnboardingController {
     private final ContenuService contenuService;
     private final GenreService genreService;
     private final UtilisateurService utilisateurService;
+    private final RecommandationService recommandationService; // ← ADDED
 
     @GetMapping
     public String showOnboarding(HttpSession session, Model model) {
@@ -46,14 +48,26 @@ public class OnboardingController {
         if (user == null)
             return "redirect:/login";
 
-        utilisateurService.savePreferences(user.getUtilisateurId(), genres, liked);
+        String userId = user.getUtilisateurId();
 
-        // Update session user object
+        // Step 1 — Save preferences in MongoDB
+        utilisateurService.savePreferences(userId, genres, liked);
+
+        // Step 2 — Call Flask AI to generate recommendations
+        try {
+            recommandationService.generateOnboardingRecommendations(userId);
+        } catch (Exception e) {
+            // Don't block the user if AI fails — just log it
+            System.err.println("⚠️ AI recommendation generation failed: " + e.getMessage());
+        }
+
+        // Step 3 — Update session
         user.setFirstLogin(false);
         user.setPreferredGenreIds(genres);
         user.setLikedContentIds(liked);
         session.setAttribute("user", user);
 
-        return "redirect:/?onboarding_complete";
+        // Step 4 — Redirect to recommendations page
+        return "redirect:/recommendations";
     }
 }
