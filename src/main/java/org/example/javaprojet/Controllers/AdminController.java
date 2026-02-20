@@ -118,7 +118,55 @@ public class AdminController {
     }
 
     // --- Gestion Saisons & Episodes ---
-    // ... existing season/episode methods ...
+
+    @PostMapping("/seasons/add")
+    public String addSeason(@ModelAttribute org.example.javaprojet.Entity.Saison saison,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            contenuService.saveSaison(saison);
+            redirectAttributes.addFlashAttribute("successMessage", "Saison ajoutée avec succès !");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de l'ajout de la saison.");
+        }
+        return "redirect:/admin/contents/edit/" + saison.getContenuId();
+    }
+
+    @PostMapping("/episodes/add")
+    public String addEpisode(@ModelAttribute org.example.javaprojet.Entity.Episode episode,
+            @RequestParam String contenuId,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            contenuService.saveEpisode(episode);
+            redirectAttributes.addFlashAttribute("successMessage", "Épisode ajouté avec succès !");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de l'ajout de l'épisode.");
+        }
+        return "redirect:/admin/contents/edit/" + contenuId;
+    }
+
+    @PostMapping("/seasons/delete/{id}")
+    public String deleteSeason(@PathVariable String id, @RequestParam String contenuId,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            contenuService.deleteSaison(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Saison supprimée avec succès !");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la suppression de la saison.");
+        }
+        return "redirect:/admin/contents/edit/" + contenuId;
+    }
+
+    @PostMapping("/episodes/delete/{id}")
+    public String deleteEpisode(@PathVariable String id, @RequestParam String contenuId,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            contenuService.deleteEpisode(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Épisode supprimé avec succès !");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la suppression de l'épisode.");
+        }
+        return "redirect:/admin/contents/edit/" + contenuId;
+    }
 
     // --- Gestion des Utilisateurs ---
 

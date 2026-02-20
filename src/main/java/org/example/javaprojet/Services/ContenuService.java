@@ -86,7 +86,7 @@ public class ContenuService {
     }
 
     // ─────────────────────────────────────────────────────────
-    //  Save content + auto retrain AI model
+    // Save content + auto retrain AI model
     // ─────────────────────────────────────────────────────────
     public Contenu saveContenu(Contenu contenu) {
         Contenu saved = contenuRepository.save(contenu);
@@ -131,6 +131,16 @@ public class ContenuService {
 
     public Episode saveEpisode(Episode episode) {
         return episodeRepository.save(episode);
+    }
+
+    public void deleteSaison(String saisonId) {
+        // Delete all episodes of this season first
+        episodeRepository.findBySaisonId(saisonId).forEach(ep -> episodeRepository.delete(ep));
+        saisonRepository.deleteById(saisonId);
+    }
+
+    public void deleteEpisode(String episodeId) {
+        episodeRepository.deleteById(episodeId);
     }
 
     public List<Contenu> getContenusByIds(List<String> ids) {

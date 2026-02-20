@@ -189,6 +189,149 @@
                     margin-top: 4px;
                 }
 
+                /* Multi-Select Styles */
+                .multi-select-container {
+                    position: relative;
+                    width: 100%;
+                }
+                .selected-tags {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                    padding: 8px 12px;
+                    background: #2F2F2F;
+                    border: 2px solid #2F2F2F;
+                    border-radius: 10px;
+                    min-height: 48px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                .selected-tags:hover {
+                    border-color: #3f3f3f;
+                }
+                .selected-tags.active {
+                    border-color: #E50914;
+                    box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.2);
+                }
+                .tag {
+                    background: #E50914;
+                    color: white;
+                    padding: 4px 12px;
+                    border-radius: 6px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    animation: popIn 0.2s ease-out;
+                }
+                @keyframes popIn {
+                    from { transform: scale(0.8); opacity: 0; }
+                    to { transform: scale(1); opacity: 1; }
+                }
+                .tag i {
+                    cursor: pointer;
+                    opacity: 0.8;
+                    transition: opacity 0.2s;
+                }
+                .tag i:hover {
+                    opacity: 1;
+                }
+                .dropdown-list {
+                    position: absolute;
+                    top: calc(100% + 5px);
+                    left: 0;
+                    right: 0;
+                    background: #1f1f1f;
+                    border: 1px solid #2F2F2F;
+                    border-radius: 10px;
+                    max-height: 250px;
+                    overflow-y: auto;
+                    z-index: 1000;
+                    display: none;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+                }
+                .dropdown-item {
+                    padding: 12px 16px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .dropdown-item:hover {
+                    background: #2F2F2F;
+                }
+                .dropdown-item.selected {
+                    background: rgba(229, 9, 20, 0.1);
+                    color: #E50914;
+                }
+
+                /* Seasons UI Improvements */
+                .season-selector {
+                    display: flex;
+                    gap: 12px;
+                    overflow-x: auto;
+                    padding-bottom: 12px;
+                    margin-bottom: 24px;
+                    scrollbar-width: thin;
+                    scrollbar-color: #E50914 transparent;
+                }
+                .season-tab {
+                    padding: 12px 24px;
+                    background: #232323;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    white-space: nowrap;
+                    font-weight: 700;
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    border: 2px solid transparent;
+                    color: #808080;
+                }
+                .season-tab:hover {
+                    background: #2a2a2a;
+                    color: #fff;
+                    transform: translateY(-2px);
+                }
+                .season-tab.active {
+                    background: rgba(229, 9, 20, 0.1);
+                    border-color: #E50914;
+                    color: #E50914;
+                    transform: translateY(-2px);
+                    box-shadow: 0 10px 20px rgba(229, 9, 20, 0.15);
+                }
+                .ep-card {
+                    background: #1f1f1f;
+                    border: 1px solid #2a2a2a;
+                    border-radius: 12px;
+                    padding: 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    transition: all 0.3s ease;
+                }
+                .ep-card:hover {
+                    background: #252525;
+                    border-color: #3f3f3f;
+                    transform: translateX(5px);
+                }
+                .ep-number {
+                    width: 40px;
+                    height: 40px;
+                    background: #2a2a2a;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: 800;
+                    color: #E50914;
+                    font-size: 16px;
+                }
+                .hidden { display: none !important; }
+
                 @media (max-width: 768px) {
                     .form-grid {
                         grid-template-columns: 1fr;
@@ -242,35 +385,37 @@
                                     </select>
                                 </div>
 
-                                <!-- Genres -->
+                                <!-- Genres (Multi-Select Dropdown) -->
                                 <div class="form-group full-width">
-                                    <label class="mb-4 block text-sm font-bold uppercase tracking-widest text-gray-400">
-                                        <i class="bi bi-tags"></i> Sélectionner les Genres
+                                    <label class="mb-2 block text-sm font-bold uppercase tracking-widest text-gray-400">
+                                        <i class="bi bi-tags"></i> Genres
                                     </label>
                                     
-                                    <div class="flex flex-wrap gap-2">
-                                        <c:choose>
-                                            <c:when test="${empty genres}">
-                                                <div class="text-center text-gray-500 py-4 italic w-full">
-                                                    Aucun genre disponible. Veuillez en ajouter dans l'onglet "Genres".
+                                    <div class="multi-select-container" id="genresMultiSelect">
+                                        <div class="selected-tags" onclick="toggleGenreDropdown(event)">
+                                            <span class="placeholder text-gray-500" id="genrePlaceholder">Sélectionner les genres...</span>
+                                            <!-- Selected tags will appear here -->
+                                        </div>
+                                        <div class="dropdown-list" id="genreDropdownList">
+                                            <c:forEach items="${genres}" var="g">
+                                                <div class="dropdown-item" 
+                                                     data-id="${g.id}" 
+                                                     data-name="${g.nom}"
+                                                     onclick="selectGenre('${g.id}', '${g.nom}', event)">
+                                                    <span>${g.nom}</span>
+                                                    <i class="bi bi-check-lg check-icon hidden"></i>
                                                 </div>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <c:forEach items="${genres}" var="g">
-                                                    <label class="relative cursor-pointer select-none">
-                                                        <input type="checkbox" name="genreIds" value="${g.id}" 
-                                                            ${not empty content.genreIds && content.genreIds.contains(g.id) ? 'checked' : ''}
-                                                            class="peer sr-only">
-                                                        <div class="px-5 py-2.5 rounded-full border-2 border-zinc-700 bg-zinc-800 text-gray-400 font-medium transition-all peer-checked:border-red-600 peer-checked:bg-red-600/10 peer-checked:text-white hover:border-zinc-500">
-                                                            ${g.nom}
-                                                        </div>
-                                                    </label>
-                                                </c:forEach>
-                                            </c:otherwise>
-                                        </c:choose>
+                                            </c:forEach>
+                                        </div>
+                                        <!-- Hidden inputs to store IDs -->
+                                        <div id="hiddenGenreInputs">
+                                            <c:forEach items="${content.genreIds}" var="gid">
+                                                <input type="hidden" name="genreIds" value="${gid}">
+                                            </c:forEach>
+                                        </div>
                                     </div>
-                                    <div class="help-text mt-3 text-gray-500">
-                                        <i class="bi bi-info-circle mr-1"></i> Vous pouvez sélectionner plusieurs genres en cliquant sur les vignettes.
+                                    <div class="help-text mt-2 text-gray-500 italic">
+                                        Sélectionnez plusieurs genres. Cliquez sur un badge pour le retirer.
                                     </div>
                                 </div>
 
@@ -395,86 +540,270 @@
             </div>
         </div>
 
-        <!-- Seasons Management for Series -->
-        <c:if test="${isEdit && content.typeContenu == 'SERIE'}">
-            <div class="form-card" style="margin-top: 30px;">
+        <!-- Seasons Management for Series (Integrated & Dynamic) -->
+        <div id="seasonsSection" class="${(isEdit && content.typeContenu == 'SERIE') ? '' : 'hidden'} container mt-8">
+            <div class="form-card">
                 <div class="form-header" style="background: #2F2F2F;">
                     <h1><i class="bi bi-collection-play"></i> Gestion des Saisons & Épisodes</h1>
                 </div>
-                <div class="form-body">
-                    <!-- Add Season -->
-                    <div class="mb-8 p-4 border border-zinc-700 rounded-lg bg-black/20">
-                        <h3 class="font-bold mb-4 text-lg">Ajouter une saison</h3>
-                        <form action="${pageContext.request.contextPath}/admin/seasons/add" method="post"
-                            class="flex gap-4 items-end">
-                            <input type="hidden" name="contenuId" value="${content.id}">
-                            <div>
-                                <label class="block text-sm text-gray-400 mb-1">Numéro</label>
-                                <input type="number" name="numeroSaison" value="${saisons.size() + 1}" required min="1"
-                                    class="w-24 px-4 py-2 border border-zinc-800 bg-zinc-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
-                            </div>
-                            <button type="submit" class="btn btn-secondary">
-                                <i class="bi bi-plus-lg"></i> Ajouter Saison
-                            </button>
-                        </form>
+                
+                <c:if test="${!isEdit}">
+                    <div class="form-body text-center py-12">
+                        <i class="bi bi-info-circle text-4xl text-gray-600 mb-4 block"></i>
+                        <p class="text-gray-400 font-medium">Enregistrez d'abord la série pour pouvoir ajouter des saisons et des épisodes.</p>
                     </div>
+                </c:if>
 
-                    <!-- Seasons List -->
-                    <div class="space-y-6">
-                        <c:forEach items="${saisons}" var="s">
-                            <div class="border border-zinc-700 rounded-lg overflow-hidden">
-                                <div class="bg-zinc-800/50 p-4 border-b border-zinc-700 flex justify-between items-center">
-                                    <h3 class="font-bold text-xl text-red-500">Saison ${s.numeroSaison}</h3>
-                                    <span class="text-sm text-gray-400">${episodesMap[s.id].size()} épisodes</span>
+                <c:if test="${isEdit}">
+                    <div class="form-body">
+                        <!-- Add Season Form -->
+                        <div class="mb-10 p-5 bg-black/30 border border-zinc-800 rounded-2xl">
+                            <h3 class="font-bold mb-4 text-white uppercase tracking-wider text-sm flex items-center gap-2">
+                                <i class="bi bi-plus-circle text-red-500"></i> Nouvelle Saison
+                            </h3>
+                            <form action="${pageContext.request.contextPath}/admin/seasons/add" method="post" class="flex gap-4 items-end">
+                                <input type="hidden" name="contenuId" value="${content.id}">
+                                <div class="w-32">
+                                    <label class="block text-xs text-gray-500 mb-2 uppercase font-bold">N° Saison</label>
+                                    <input type="number" name="numeroSaison" value="${saisons.size() + 1}" required min="1"
+                                        class="w-full px-4 py-2 border border-zinc-800 bg-zinc-900 text-white rounded-lg focus:border-red-600 outline-none">
                                 </div>
-                                <div class="p-4">
-                                    <!-- Episodes List -->
-                                    <c:if test="${not empty episodesMap[s.id]}">
-                                        <div class="mb-4 space-y-2">
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-bold transition-all flex items-center gap-2">
+                                    <i class="bi bi-plus-lg"></i> Créer
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Season Tabs / Selector -->
+                        <c:if test="${not empty saisons}">
+                            <div class="season-selector custom-scrollbar">
+                                <c:forEach items="${saisons}" var="s" varStatus="status">
+                                    <div class="season-tab ${status.first ? 'active' : ''}" 
+                                         onclick="showSeason('${s.id}', this)">
+                                        Saison ${s.numeroSaison}
+                                    </div>
+                                </c:forEach>
+                            </div>
+
+                            <!-- Episodes Container -->
+                            <div id="episodesMasterContainer">
+                                <c:forEach items="${saisons}" var="s" varStatus="status">
+                                    <div id="seasonContent_${s.id}" class="season-content-block ${status.first ? '' : 'hidden'}">
+                                        <div class="flex justify-between items-center mb-6">
+                                            <div class="flex items-center gap-3">
+                                                <h3 class="text-2xl font-bold text-white flex items-center gap-3">
+                                                    <span class="bg-red-600/20 text-red-500 px-3 py-1 rounded-lg text-sm">SAISON ${s.numeroSaison}</span>
+                                                    Catalogue des épisodes
+                                                </h3>
+                                                <form action="${pageContext.request.contextPath}/admin/seasons/delete/${s.id}" method="post" 
+                                                      onsubmit="return confirm('Supprimer toute la saison et ses épisodes ?')" class="inline">
+                                                    <input type="hidden" name="contenuId" value="${content.id}">
+                                                    <button type="submit" class="text-xs text-gray-500 hover:text-red-500 transition-colors bg-zinc-800 px-2 py-1 rounded border border-zinc-700">
+                                                        <i class="bi bi-trash"></i> Supprimer la saison
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            <span class="text-gray-500 text-sm font-medium">${episodesMap[s.id].size()} épisodes enregistrés</span>
+                                        </div>
+
+                                        <!-- Add Episode Form -->
+                                        <form action="${pageContext.request.contextPath}/admin/episodes/add" method="post"
+                                            class="mb-10 p-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl shadow-2xl">
+                                            <input type="hidden" name="contenuId" value="${content.id}">
+                                            <input type="hidden" name="saisonId" value="${s.id}">
+                                            
+                                            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                                                <div class="md:col-span-1">
+                                                    <label class="block text-[10px] text-zinc-500 mb-1.5 uppercase font-black tracking-tighter">№</label>
+                                                    <input type="number" name="numeroEpisode" value="${episodesMap[s.id].size() + 1}" required
+                                                        class="w-full px-3 py-2.5 bg-zinc-800 border-2 border-zinc-700 rounded-xl text-white font-bold focus:border-red-600 outline-none transition-all">
+                                                </div>
+                                                <div class="md:col-span-6">
+                                                    <label class="block text-[10px] text-zinc-500 mb-1.5 uppercase font-black tracking-tighter">Titre de l'épisode</label>
+                                                    <input type="text" name="titre" placeholder="Ex: Les origines..." required
+                                                        class="w-full px-4 py-2.5 bg-zinc-800 border-2 border-zinc-700 rounded-xl text-white focus:border-red-600 outline-none transition-all">
+                                                </div>
+                                                <div class="md:col-span-2">
+                                                    <label class="block text-[10px] text-zinc-500 mb-1.5 uppercase font-black tracking-tighter">Durée (min)</label>
+                                                    <input type="number" name="dureeMinutes" value="45" required min="1"
+                                                        class="w-full px-4 py-2.5 bg-zinc-800 border-2 border-zinc-700 rounded-xl text-white focus:border-red-600 outline-none transition-all">
+                                                </div>
+                                                <div class="md:col-span-3">
+                                                    <button type="submit" class="w-full bg-red-600 text-white h-[48px] rounded-xl font-bold hover:bg-red-700 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-600/20">
+                                                        <i class="bi bi-plus-lg"></i> Ajouter l'épisode
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                        <!-- Episodes Table/List -->
+                                        <div class="space-y-3">
                                             <c:forEach items="${episodesMap[s.id]}" var="ep">
-                                                <div class="flex justify-between items-center bg-zinc-900 p-3 rounded">
-                                                    <div>
-                                                        <span class="font-bold mr-2 text-gray-400">#${ep.numeroEpisode}</span>
-                                                        <span class="font-medium">${ep.titre}</span>
-                                                        <span class="text-xs text-gray-500 ml-2">(${ep.dureeMinutes} min)</span>
+                                                <div class="ep-card group">
+                                                    <div class="flex items-center gap-5">
+                                                        <div class="ep-number shadow-inner">
+                                                            ${ep.numeroEpisode}
+                                                        </div>
+                                                        <div>
+                                                            <div class="font-bold text-white text-lg leading-tight">${ep.titre}</div>
+                                                            <div class="flex items-center gap-3 mt-1">
+                                                                <span class="text-[10px] font-black uppercase tracking-widest text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded">ÉPISODE</span>
+                                                                <span class="text-xs text-zinc-400 font-medium italic"><i class="bi bi-clock-history mr-1 text-red-500"></i> ${ep.dureeMinutes != null ? ep.dureeMinutes : '45'} minutes</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+                                                        <form action="${pageContext.request.contextPath}/admin/episodes/delete/${ep.id}" method="post" 
+                                                              onsubmit="return confirm('⚠️ Supprimer cet épisode définitivement ?')" class="inline">
+                                                            <input type="hidden" name="contenuId" value="${content.id}">
+                                                            <button type="submit" class="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-800 text-zinc-500 hover:bg-red-600 hover:text-white transition-all shadow-xl">
+                                                                <i class="bi bi-trash-fill text-sm"></i>
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </c:forEach>
+                                            <c:if test="${empty episodesMap[s.id]}">
+                                                <div class="text-center py-10 text-gray-600 italic">
+                                                    Aucun épisode pour le moment.
+                                                </div>
+                                            </c:if>
                                         </div>
-                                    </c:if>
-
-                                    <!-- Add Episode -->
-                                    <form action="${pageContext.request.contextPath}/admin/episodes/add" method="post"
-                                        class="mt-4 flex gap-3 items-end bg-black/20 p-3 rounded">
-                                        <input type="hidden" name="contenuId" value="${content.id}">
-                                        <input type="hidden" name="saisonId" value="${s.id}">
-                                        
-                                        <div class="w-20">
-                                            <label class="block text-xs text-gray-500 mb-1">N°</label>
-                                            <input type="number" name="numeroEpisode" value="${episodesMap[s.id].size() + 1}" required
-                                                class="w-full px-3 py-1.5 text-sm border border-zinc-700 bg-zinc-900 rounded focus:border-red-600 outline-none block">
-                                        </div>
-                                        <div class="flex-1">
-                                            <label class="block text-xs text-gray-500 mb-1">Titre</label>
-                                            <input type="text" name="titre" placeholder="Titre de l'épisode" required
-                                                class="w-full px-3 py-1.5 text-sm border border-zinc-700 bg-zinc-900 rounded focus:border-red-600 outline-none block">
-                                        </div>
-                                        <div class="w-24">
-                                            <label class="block text-xs text-gray-500 mb-1">Durée (min)</label>
-                                            <input type="number" name="dureeMinutes" value="45" required
-                                                class="w-full px-3 py-1.5 text-sm border border-zinc-700 bg-zinc-900 rounded focus:border-red-600 outline-none block">
-                                        </div>
-                                        <button type="submit" class="px-4 py-1.5 bg-zinc-700 hover:bg-zinc-600 rounded text-sm font-medium transition-colors h-[34px]">
-                                            <i class="bi bi-plus"></i>
-                                        </button>
-                                    </form>
-                                </div>
+                                    </div>
+                                </c:forEach>
                             </div>
-                        </c:forEach>
+                        </c:if>
                     </div>
-                </div>
+                </c:if>
             </div>
-        </c:if>
+        </div>
+
+        <script>
+            // --- Multi-Select Genre Logic ---
+            const selectedGenres = new Set();
+            
+            // Initialization: Load existing genres from hidden inputs
+            document.addEventListener('DOMContentLoaded', () => {
+                const hiddenInputs = document.querySelectorAll('#hiddenGenreInputs input');
+                hiddenInputs.forEach(input => {
+                    const id = input.value;
+                    // Find name from dropdown
+                    const item = document.querySelector(`.dropdown-item[data-id="${id}"]`);
+                    if (item) {
+                        const name = item.getAttribute('data-name');
+                        addTag(id, name, false); // false = don't add to hidden again, it's already there
+                        item.classList.add('selected');
+                        item.querySelector('.check-icon').classList.remove('hidden');
+                    }
+                });
+                
+                // Content Type Logic
+                const typeSelect = document.getElementById('typeContenu');
+                typeSelect.addEventListener('change', function() {
+                    const seasonsSection = document.getElementById('seasonsSection');
+                    if (this.value === 'SERIE') {
+                        seasonsSection.classList.remove('hidden');
+                    } else {
+                        seasonsSection.classList.add('hidden');
+                    }
+                });
+            });
+
+            function toggleGenreDropdown(e) {
+                const dropdown = document.getElementById('genreDropdownList');
+                const container = document.querySelector('.selected-tags');
+                const isVisible = dropdown.style.display === 'block';
+                
+                // Close others if any
+                dropdown.style.display = isVisible ? 'none' : 'block';
+                container.classList.toggle('active', !isVisible);
+                e.stopPropagation();
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', () => {
+                document.getElementById('genreDropdownList').style.display = 'none';
+                document.querySelector('.selected-tags').classList.remove('active');
+            });
+
+            function selectGenre(id, name, e) {
+                e.stopPropagation();
+                if (selectedGenres.has(id)) {
+                    removeTag(id);
+                } else {
+                    addTag(id, name, true);
+                }
+            }
+
+            function addTag(id, name, addToHidden) {
+                if (selectedGenres.has(id)) return;
+                
+                selectedGenres.add(id);
+                document.getElementById('genrePlaceholder').classList.add('hidden');
+                
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.id = `tag_${id}`;
+                tag.innerHTML = `
+                    <span>${name}</span>
+                    <i class="bi bi-x-circle-fill" onclick="removeTag('${id}', event)"></i>
+                `;
+                document.querySelector('.selected-tags').appendChild(tag);
+                
+                // UI feedback in dropdown
+                const item = document.querySelector(`.dropdown-item[data-id="${id}"]`);
+                if(item) {
+                    item.classList.add('selected');
+                    item.querySelector('.check-icon').classList.remove('hidden');
+                }
+
+                // Add hidden input
+                if (addToHidden) {
+                    const hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = 'genreIds';
+                    hidden.value = id;
+                    hidden.id = `hidden_${id}`;
+                    document.getElementById('hiddenGenreInputs').appendChild(hidden);
+                }
+            }
+
+            function removeTag(id, e) {
+                if(e) e.stopPropagation();
+                
+                selectedGenres.delete(id);
+                
+                const tag = document.getElementById(`tag_${id}`);
+                if (tag) tag.remove();
+                
+                const hidden = document.getElementById(`hidden_${id}`) || document.querySelector(`#hiddenGenreInputs input[value="${id}"]`);
+                if (hidden) hidden.remove();
+                
+                // UI feedback
+                const item = document.querySelector(`.dropdown-item[data-id="${id}"]`);
+                if(item) {
+                    item.classList.remove('selected');
+                    item.querySelector('.check-icon').classList.add('hidden');
+                }
+                
+                if (selectedGenres.size === 0) {
+                    document.getElementById('genrePlaceholder').classList.remove('hidden');
+                }
+            }
+
+            // --- Seasons Logic ---
+            function showSeason(seasonId, tabElement) {
+                // Deactivate all tabs
+                document.querySelectorAll('.season-tab').forEach(t => t.classList.remove('active'));
+                // Activate clicked tab
+                tabElement.classList.add('active');
+                
+                // Hide all season blocks
+                document.querySelectorAll('.season-content-block').forEach(b => b.classList.add('hidden'));
+                // Show selected block
+                document.getElementById('seasonContent_' + seasonId).classList.remove('hidden');
+            }
+        </script>
 
     </div>
 </body>
