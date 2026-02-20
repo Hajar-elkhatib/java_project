@@ -96,11 +96,18 @@ public class AdminController {
 
     @PostMapping("/contents/save")
     public String saveContent(@ModelAttribute Contenu contenu,
-            @RequestParam(required = false) List<String> genreIds) {
-        if (genreIds != null) {
-            contenu.setGenreIds(genreIds);
+            @RequestParam(required = false) List<String> genreIds,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            if (genreIds != null) {
+                contenu.setGenreIds(genreIds);
+            }
+            contenuService.saveContenu(contenu);
+            redirectAttributes.addFlashAttribute("successMessage", "Contenu enregistré avec succès !");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de l'enregistrement : " + e.getMessage());
+            return "redirect:/admin/contents/" + (contenu.getId() != null ? "edit/" + contenu.getId() : "add");
         }
-        contenuService.saveContenu(contenu);
         return "redirect:/admin/dashboard#contents";
     }
 

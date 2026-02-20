@@ -352,6 +352,20 @@
                         <i class="bi bi-film"></i> Gestion des contenus
                     </h1>
 
+                    <!-- Feedback Messages -->
+                    <c:if test="${not empty successMessage}">
+                        <div class="mb-6 p-4 bg-green-500/10 border border-green-500/50 text-green-500 rounded-lg flex items-center gap-3">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <p>${successMessage}</p>
+                        </div>
+                    </c:if>
+                    <c:if test="${not empty errorMessage}">
+                        <div class="mb-6 p-4 bg-red-500/10 border border-red-500/50 text-red-500 rounded-lg flex items-center gap-3">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <p>${errorMessage}</p>
+                        </div>
+                    </c:if>
+
                     <div class="card p-6">
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-xl font-bold">Liste des contenus</h2>

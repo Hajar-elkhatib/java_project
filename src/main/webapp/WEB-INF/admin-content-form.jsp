@@ -243,35 +243,34 @@
                                 </div>
 
                                 <!-- Genres -->
-                                <div class="form-group">
-                                    <label class="mb-2 block">
-                                        <i class="bi bi-tags"></i> Genres
+                                <div class="form-group full-width">
+                                    <label class="mb-4 block text-sm font-bold uppercase tracking-widest text-gray-400">
+                                        <i class="bi bi-tags"></i> Sélectionner les Genres
                                     </label>
                                     
-                                    <div class="bg-[#2F2F2F] border border-zinc-700 rounded-lg p-3 h-48 overflow-y-auto grid grid-cols-2 gap-2">
+                                    <div class="flex flex-wrap gap-2">
                                         <c:choose>
                                             <c:when test="${empty genres}">
-                                                <div class="col-span-2 text-center text-gray-500 py-4 italic">
+                                                <div class="text-center text-gray-500 py-4 italic w-full">
                                                     Aucun genre disponible. Veuillez en ajouter dans l'onglet "Genres".
                                                 </div>
                                             </c:when>
                                             <c:otherwise>
                                                 <c:forEach items="${genres}" var="g">
-                                                    <label class="flex items-center space-x-3 cursor-pointer hover:bg-white/5 p-2 rounded transition-colors select-none">
-                                                        <div class="relative flex items-center">
-                                                            <input type="checkbox" name="genreIds" value="${g.id}" 
-                                                                ${not empty content.genreIds && content.genreIds.contains(g.id) ? 'checked' : ''}
-                                                                class="peer w-5 h-5 rounded border-2 border-gray-500 text-red-600 focus:ring-red-500 bg-zinc-800 checked:bg-red-600 checked:border-red-600 transition-all">
-                                                            <i class="bi bi-check text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs opacity-0 peer-checked:opacity-100 pointer-events-none"></i>
+                                                    <label class="relative cursor-pointer select-none">
+                                                        <input type="checkbox" name="genreIds" value="${g.id}" 
+                                                            ${not empty content.genreIds && content.genreIds.contains(g.id) ? 'checked' : ''}
+                                                            class="peer sr-only">
+                                                        <div class="px-5 py-2.5 rounded-full border-2 border-zinc-700 bg-zinc-800 text-gray-400 font-medium transition-all peer-checked:border-red-600 peer-checked:bg-red-600/10 peer-checked:text-white hover:border-zinc-500">
+                                                            ${g.nom}
                                                         </div>
-                                                        <span class="text-sm font-medium text-gray-200 peer-checked:text-white">${g.nom}</span>
                                                     </label>
                                                 </c:forEach>
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
-                                    <div class="help-text mt-2 text-gray-400">
-                                        <i class="bi bi-info-circle mr-1"></i> Cliquez sur les cases pour sélectionner plusieurs genres.
+                                    <div class="help-text mt-3 text-gray-500">
+                                        <i class="bi bi-info-circle mr-1"></i> Vous pouvez sélectionner plusieurs genres en cliquant sur les vignettes.
                                     </div>
                                 </div>
 
@@ -290,8 +289,17 @@
                                     <label for="langue">
                                         <i class="bi bi-translate"></i> Langue
                                     </label>
-                                    <input type="text" id="langue" name="langue" value="${content.langue}"
-                                        placeholder="Français, Anglais...">
+                                    <select id="langue" name="langue">
+                                        <option value="">Sélectionner...</option>
+                                        <option value="Français" ${content.langue == 'Français' ? 'selected' : ''}>Français</option>
+                                        <option value="Anglais" ${content.langue == 'Anglais' ? 'selected' : ''}>Anglais</option>
+                                        <option value="Japonais" ${content.langue == 'Japonais' ? 'selected' : ''}>Japonais</option>
+                                        <option value="Coréen" ${content.langue == 'Coréen' ? 'selected' : ''}>Coréen</option>
+                                        <option value="Espagnol" ${content.langue == 'Espagnol' ? 'selected' : ''}>Espagnol</option>
+                                        <option value="Italien" ${content.langue == 'Italien' ? 'selected' : ''}>Italien</option>
+                                        <option value="Allemand" ${content.langue == 'Allemand' ? 'selected' : ''}>Allemand</option>
+                                        <option value="Autre" ${not empty content.langue && content.langue != 'Français' && content.langue != 'Anglais' && content.langue != 'Japonais' && content.langue != 'Coréen' && content.langue != 'Espagnol' && content.langue != 'Italien' && content.langue != 'Allemand' ? 'selected' : ''}>Autre</option>
+                                    </select>
                                 </div>
 
                                 <!-- Pays -->
@@ -299,8 +307,20 @@
                                     <label for="pays">
                                         <i class="bi bi-globe"></i> Pays
                                     </label>
-                                    <input type="text" id="pays" name="pays" value="${content.pays}"
-                                        placeholder="France, USA...">
+                                    <select id="pays" name="pays">
+                                        <option value="">Sélectionner...</option>
+                                        <option value="France" ${content.pays == 'France' ? 'selected' : ''}>France</option>
+                                        <option value="USA" ${content.pays == 'USA' ? 'selected' : ''}>USA</option>
+                                        <option value="UK" ${content.pays == 'UK' ? 'selected' : ''}>UK</option>
+                                        <option value="Japon" ${content.pays == 'Japon' ? 'selected' : ''}>Japon</option>
+                                        <option value="Corée du Sud" ${content.pays == 'Corée du Sud' ? 'selected' : ''}>Corée du Sud</option>
+                                        <option value="Canada" ${content.pays == 'Canada' ? 'selected' : ''}>Canada</option>
+                                        <option value="Espagne" ${content.pays == 'Espagne' ? 'selected' : ''}>Espagne</option>
+                                        <option value="Italie" ${content.pays == 'Italie' ? 'selected' : ''}>Italie</option>
+                                        <option value="Allemagne" ${content.pays == 'Allemagne' ? 'selected' : ''}>Allemagne</option>
+                                        <option value="Inde" ${content.pays == 'Inde' ? 'selected' : ''}>Inde</option>
+                                        <option value="Autre" ${not empty content.pays && content.pays != 'France' && content.pays != 'USA' && content.pays != 'UK' && content.pays != 'Japon' && content.pays != 'Corée du Sud' && content.pays != 'Canada' && content.pays != 'Espagne' && content.pays != 'Italie' && content.pays != 'Allemagne' && content.pays != 'Inde' ? 'selected' : ''}>Autre</option>
+                                    </select>
                                 </div>
 
                                 <!-- Date de sortie -->

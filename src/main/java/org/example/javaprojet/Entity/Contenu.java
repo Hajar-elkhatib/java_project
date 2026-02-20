@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection="contenu")
+@Document(collection = "contenu")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -26,7 +26,8 @@ public class Contenu {
     private String langue;
 
     private String pays;
-    private Date dateSortie;
+    @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd")
+    private java.util.Date dateSortie;
     private int dureeMinutes;
     private double noteMoyenne;
 
