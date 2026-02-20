@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" %>
 <%@ include file="includes/header.jspf" %>
 <%@ include file="includes/navbar.jspf" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>

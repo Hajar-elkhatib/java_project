@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" %>
 <%@ include file="includes/header.jspf" %>
 <div class="min-h-screen flex items-center justify-center relative px-4 py-32 overflow-hidden">
     <!-- Background Decoration -->
